@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrutalAudit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+
+  <!-- Background Effects -->
+  <div class="bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+  <div class="grid-bg"></div>
+  <div class="noise"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav" class="glass-nav">
+    <div class="logo" data-navigate="landing"><img src="/logo.png" alt="Logo"><span>BrutalAudit</span></div>
+    <div class="nav-links">
+      <span class="nav-link" data-navigate="landing">Home</span>
+      <span class="nav-link" data-navigate="dashboard">Dashboard</span>
+      <span class="nav-link" data-navigate="repos">Repos</span>
+      <span class="nav-link" data-navigate="report">Report</span>
+    </div>
+    <div class="nav-cta">
+      <button class="btn-ghost btn-sm ripple-btn" data-navigate="auth" data-auth-mode="signin">Sign In</button>
+      <button class="btn-red btn-sm premium-glow ripple-btn" data-navigate="auth" data-auth-mode="signup">Get Started</button>
+    </div>
+  </nav>
+
+  <div id="app-container">
+    <!-- LANDING PAGE -->
+    <div id="landing" class="page active">
+      <section class="hero">
+        <div class="hero-badge hover-lift">
+          <span></span> AI-Powered Code Intelligence
+        </div>
+        <h1 class="hero-title">Brutal Truth<br>for Your <span class="grad-text">GitHub.</span></h1>
+        <p class="hero-sub">Stop guessing about your code quality. BrutalAudit delivers unfiltered analysis - security flaws, architectural debt, and performance gaps - in seconds.</p>
+        
+        <div class="hero-actions">
+          <button class="btn-red premium-glow ripple-btn" data-navigate="auth">
+            <span class="icon">⚡</span> Start Free Audit
+          </button>
+          <button class="btn-ghost ripple-btn" data-navigate="report">View Live Demo →</button>
+        </div>
+
+        <!-- Animated Floating Hero Network Visualization -->
+        <div class="hero-visual-container">
+          <canvas id="hero-network-canvas"></canvas>
+        </div>
+          
+        <div class="hero-stats stagger-group">
+          <div class="glass stat-card hover-lift magnetic">
+            <div class="stat-num">2.4M<span class="stat-red">+</span></div>
+            <div class="stat-label">Repos Analyzed</div>
+          </div>
+          <div class="glass stat-card hover-lift magnetic">
+            <div class="stat-num">99<span class="stat-red">%</span></div>
+            <div class="stat-label">Accuracy Rate</div>
+          </div>
+          <div class="glass stat-card hover-lift magnetic">
+            <div class="stat-num">3.2<span class="stat-red">s</span></div>
+            <div class="stat-label">Avg Audit Time</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scrolling badges -->
+      <div class="badges-row">
+        <div class="badges-track" id="badges-track">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Features -->
+      <section class="section">
+        <div class="section-label">Capabilities</div>
+        <h2 class="section-title">Everything you need to<br>ship better code.</h2>
+        <p class="section-sub">Deep static analysis meets AI reasoning to surface what linters miss.</p>
+        <div class="features-grid stagger-group">
+          <!-- Feature Cards -->
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">🔐</div>
+            <div class="feature-title">Security Scanning</div>
+            <div class="feature-desc">CVE detection, secret exposure, SQL injection vectors, and dependency vulnerabilities mapped to OWASP top 10.</div>
+          </div>
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">🏗️</div>
+            <div class="feature-title">Architecture Analysis</div>
+            <div class="feature-desc">Circular dependencies, coupling metrics, separation of concerns, and design pattern recognition across your entire codebase.</div>
+          </div>
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">Performance Profiling</div>
+            <div class="feature-desc">Bundle bloat, N+1 queries, memory leaks, and algorithmic complexity analysis with fix suggestions.</div>
+          </div>
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">🧪</div>
+            <div class="feature-title">Test Coverage</div>
+            <div class="feature-desc">Coverage gaps, flaky test detection, missing edge cases, and test quality scoring with mutation analysis.</div>
+          </div>
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">📚</div>
+            <div class="feature-title">Documentation Score</div>
+            <div class="feature-desc">Inline comments, README quality, API docs completeness, and changelog hygiene evaluated and graded.</div>
+          </div>
+          <div class="glass feature-card hover-glow">
+            <div class="feature-icon">🤖</div>
+            <div class="feature-title">AI Fix Suggestions</div>
+            <div class="feature-desc">Not just problems - GPT-4 generated refactoring plans, ordered by impact and grouped by effort level.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-label">From Developers</div>
+        <h2 class="section-title">Trusted by teams who<br>care about quality.</h2>
+        <div class="testi-grid stagger-group">
+          <div class="glass testi-card hover-lift">
+            <div class="stars">★★★★★</div>
+            <div class="testi-text">"BrutalAudit found a critical API key exposure in our repo that had been there for 8 months. No other tool caught it. This is essential."</div>
+            <div class="testi-author"><div class="avatar">SK</div><div><div class="author-name">Sarah Kim</div><div class="author-role">CTO at FinFlow</div></div></div>
+          </div>
+          <div class="glass testi-card hover-lift">
+            <div class="stars">★★★★★</div>
+            <div class="testi-text">"The architecture analysis is insane. It drew our entire dependency graph and identified a circular dependency chain we had missed for two years."</div>
+            <div class="testi-author"><div class="avatar">MR</div><div><div class="author-name">Marcus Rivera</div><div class="author-role">Staff Engineer at Stripe</div></div></div>
+          </div>
+          <div class="glass testi-card hover-lift">
+            <div class="stars">★★★★★</div>
+            <div class="testi-text">"We reduced our bundle size by 43% using the performance roadmap. The recommendations were specific, actionable, and ranked by actual impact."</div>
+            <div class="testi-author"><div class="avatar">AL</div><div><div class="author-name">Ava Lin</div><div class="author-role">Lead Dev at Vercel</div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">Simple pricing.<br>No surprises.</h2>
+        <div class="pricing-grid stagger-group">
+          <div class="glass price-card hover-glow">
+            <div class="price-tier">Starter</div>
+            <div class="price-amount">$0</div>
+            <div class="price-period">Forever free</div>
+            <div class="price-divider"></div>
+            <div class="price-feature"><span class="check">✓</span> 3 repos / month</div>
+            <div class="price-feature"><span class="check">✓</span> Basic audit report</div>
+            <div class="price-feature"><span class="check">✓</span> Security scan</div>
+            <div class="price-feature" style="opacity:0.4"><span>✗</span> AI fix suggestions</div>
+            <div class="price-feature" style="opacity:0.4"><span>✗</span> PDF export</div>
+            <div style="margin-top:24px"><button class="btn-ghost ripple-btn" style="width:100%" data-navigate="auth">Get Started Free</button></div>
+          </div>
+          <div class="glass price-card featured premium-glow hover-glow">
+            <div class="price-badge">MOST POPULAR</div>
+            <div class="price-tier">Pro</div>
+            <div class="price-amount">$29<span style="font-size:20px;color:var(--text3)">/mo</span></div>
+            <div class="price-period">Per workspace</div>
+            <div class="price-divider"></div>
+            <div class="price-feature"><span class="check">✓</span> Unlimited repos</div>
+            <div class="price-feature"><span class="check">✓</span> Full audit report</div>
+            <div class="price-feature"><span class="check">✓</span> AI fix suggestions</div>
+            <div class="price-feature"><span class="check">✓</span> PDF export</div>
+            <div class="price-feature"><span class="check">✓</span> Priority support</div>
+            <div style="margin-top:24px"><button class="btn-red ripple-btn" style="width:100%" data-navigate="auth">Start Pro Trial</button></div>
+          </div>
+          <div class="glass price-card hover-glow">
+            <div class="price-tier">Enterprise</div>
+            <div class="price-amount">Custom</div>
+            <div class="price-period">Contact us</div>
+            <div class="price-divider"></div>
+            <div class="price-feature"><span class="check">✓</span> Everything in Pro</div>
+            <div class="price-feature"><span class="check">✓</span> SSO / SAML</div>
+            <div class="price-feature"><span class="check">✓</span> On-premise option</div>
+            <div class="price-feature"><span class="check">✓</span> SLA guarantee</div>
+            <div class="price-feature"><span class="check">✓</span> Dedicated CSM</div>
+            <div style="margin-top:24px"><button class="btn-ghost ripple-btn" style="width:100%">Talk to Sales</button></div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="logo" style="font-size:20px">BrutalAudit</div>
+            <p>Unfiltered code intelligence for teams who care about shipping great software.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Product</h4>
+            <a>Features</a><a>Pricing</a><a>Changelog</a><a>Roadmap</a>
+          </div>
+          <div class="footer-col">
+            <h4>Developers</h4>
+            <a>API Docs</a><a>GitHub App</a><a>CLI Tool</a><a>Webhooks</a>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <a>About</a><a>Blog</a><a>Careers</a><a>Security</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-copy">© 2026 BrutalAudit. All rights reserved.</div>
+          <div style="display:flex;gap:20px">
+            <a style="font-size:13px;color:var(--text3);text-decoration:none;cursor:pointer">Privacy</a>
+            <a style="font-size:13px;color:var(--text3);text-decoration:none;cursor:pointer">Terms</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- AUTH PAGE -->
+    <div id="auth" class="page">
+      <div class="glass auth-card premium-shadow">
+        <div class="auth-logo"><img src="/logo.png" alt="Logo"><span>BrutalAudit</span></div>
+        <h2 class="auth-title" id="auth-title">Welcome back.</h2>
+        <p class="auth-sub" id="auth-sub">Connect your GitHub account to start auditing your repositories. Read-only access - we never write to your repos.</p>
+        <button class="btn-red premium-glow ripple-btn" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px" data-action="github-auth">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          Continue with GitHub
+        </button>
+        <div class="auth-divider"><span>or sign in with email</span></div>
+        <div class="input-wrap" id="auth-name-wrap" style="display:none"><label>Full Name</label><input type="text" placeholder="John Doe" class="glass-input"></div>
+        <div class="input-wrap"><label>Email</label><input type="email" placeholder="you@company.com" class="glass-input"></div>
+        <div class="input-wrap" id="auth-verify-wrap" style="display:none"><label>Verification Code</label><div style="display:flex;gap:8px"><input type="text" placeholder="000-000" class="glass-input" style="flex:1;text-align:center;letter-spacing:4px;font-weight:600;"><button class="btn-ghost" style="padding:0 16px;font-size:13px;border-radius:12px;">Send</button></div></div>
+        <div class="input-wrap"><label>Password</label><input type="password" placeholder="••••••••" class="glass-input"></div>
+        <button id="auth-submit-btn" class="btn-ghost ripple-btn" style="width:100%;margin-top:8px" data-navigate="dashboard">Sign In</button>
+        <p id="auth-footer-text" style="font-size:13px;color:var(--text3);text-align:center;margin-top:20px">Don't have an account? <span class="text-link auth-toggle-link" data-auth-mode="signup">Create one free →</span></p>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard" class="page dashboard-layout">
+      <aside class="sidebar glass-panel">
+        <div class="sidebar-logo"><img src="/logo.png" alt="Logo"><span>BrutalAudit</span></div>
+        <div class="sidebar-nav">
+          <div class="nav-section">Main</div>
+          <div class="nav-item active magnetic" data-navigate="dashboard"><span class="icon">📊</span> Overview</div>
+          <div class="nav-item magnetic" data-navigate="repos"><span class="icon">📁</span> Repositories <span class="nav-badge">12</span></div>
+          <div class="nav-item magnetic" data-navigate="report"><span class="icon">📋</span> Reports</div>
+          <div class="nav-section">Analyze</div>
+          <div class="nav-item magnetic"><span class="icon">🔍</span> New Audit</div>
+          <div class="nav-item magnetic"><span class="icon">📈</span> Trends</div>
+          <div class="nav-item magnetic"><span class="icon">🔐</span> Security</div>
+          <div class="nav-section">Settings</div>
+          <div class="nav-item magnetic"><span class="icon">⚙️</span> Settings</div>
+          <div class="nav-item magnetic"><span class="icon">🔗</span> Integrations</div>
+        </div>
+        <div class="sidebar-profile">
+          <div class="profile-avatar premium-glow">AJ</div>
+          <div><div class="profile-name">Alex Johnson</div><div class="profile-handle">@alexjohnson</div></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Good morning, Alex 👋</div>
+            <div class="dash-sub">Your repositories are looking mostly healthy. 2 issues need attention.</div>
+          </div>
+          <button class="btn-red premium-glow ripple-btn" data-action="start-audit">+ New Audit</button>
+        </div>
+
+        <div class="overview-cards stagger-group">
+          <div class="glass ov-card hover-lift">
+            <div class="ov-icon glow-icon">📊</div>
+            <div class="ov-label">Overall Score</div>
+            <div class="ov-val counter" data-target="82">0</div><span class="ov-val-suffix">/100</span>
+            <div class="ov-change change-up">↑ +4 this week</div>
+          </div>
+          <div class="glass ov-card hover-lift">
+            <div class="ov-icon glow-icon">📁</div>
+            <div class="ov-label">Repos Audited</div>
+            <div class="ov-val counter" data-target="12">0</div>
+            <div class="ov-change change-up">↑ 2 new repos</div>
+          </div>
+          <div class="glass ov-card hover-lift">
+            <div class="ov-icon glow-icon red-icon">🔐</div>
+            <div class="ov-label">Critical Issues</div>
+            <div class="ov-val counter text-red" data-target="2">0</div>
+            <div class="ov-change change-down">↓ Needs action</div>
+          </div>
+          <div class="glass ov-card hover-lift">
+            <div class="ov-icon glow-icon">✅</div>
+            <div class="ov-label">Fixed This Month</div>
+            <div class="ov-val counter" data-target="17">0</div>
+            <div class="ov-change change-up">↑ +8 vs last month</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid stagger-group">
+          <!-- Main Score Ring -->
+          <div class="glass dash-widget hover-glow">
+            <div class="widget-header">
+              <h3>Overall Health</h3>
+              <span class="badge-good">Top 8%</span>
+            </div>
+            <div class="score-ring-wrap">
+              <div class="ring-container premium-ring">
+                <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+                  <circle class="ring-bg" cx="80" cy="80" r="68" stroke-width="8"/>
+                  <circle class="ring-glow" cx="80" cy="80" r="68" stroke-width="8" stroke-dasharray="427" stroke-dashoffset="427"/>
+                  <circle class="ring-fill" cx="80" cy="80" r="68" stroke-width="8" stroke-dasharray="427" stroke-dashoffset="427"/>
+                </svg>
+                <div class="ring-center">
+                  <div class="ring-score">82</div>
+                  <div class="ring-grade">Grade A</div>
+                </div>
+              </div>
+            </div>
+            <div class="score-bars">
+              <div class="score-bar-item"><span class="sb-label">Security</span><div class="sb-track"><div class="sb-fill" style="width:0%" data-width="95%"></div></div><span class="sb-val">95</span></div>
+              <div class="score-bar-item"><span class="sb-label">Architecture</span><div class="sb-track"><div class="sb-fill" style="width:0%" data-width="78%"></div></div><span class="sb-val">78</span></div>
+              <div class="score-bar-item"><span class="sb-label">Performance</span><div class="sb-track"><div class="sb-fill" style="width:0%" data-width="88%"></div></div><span class="sb-val">88</span></div>
+            </div>
+          </div>
+
+          <!-- Trend Chart -->
+          <div class="glass dash-widget hover-glow chart-widget">
+            <div class="widget-header">
+              <h3>Audit Scores Over Time</h3>
+              <div class="chart-controls">
+                <span class="active">1M</span><span>3M</span><span>1Y</span>
+              </div>
+            </div>
+            <canvas id="trendChart"></canvas>
+          </div>
+
+          <!-- Live Activity Feed -->
+          <div class="glass dash-widget hover-glow activity-widget">
+            <div class="widget-header">
+              <h3>Live Activity</h3>
+            </div>
+            <div class="activity-feed">
+              <div class="activity-item anim-enter">
+                <div class="activity-dot dot-red premium-glow"></div>
+                <div class="activity-content">
+                  <p>Critical CVE found in <strong>frontend-monorepo</strong></p>
+                  <span class="time">2 mins ago</span>
+                </div>
+              </div>
+              <div class="activity-item anim-enter" style="animation-delay: 0.1s">
+                <div class="activity-dot dot-green"></div>
+                <div class="activity-content">
+                  <p>Score improved to 94 on <strong>auth-service</strong></p>
+                  <span class="time">1 hour ago</span>
+                </div>
+              </div>
+              <div class="activity-item anim-enter" style="animation-delay: 0.2s">
+                <div class="activity-dot dot-yellow"></div>
+                <div class="activity-content">
+                  <p>New architectural debt warning in <strong>payment-api</strong></p>
+                  <span class="time">3 hours ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Heatmap -->
+          <div class="glass dash-widget hover-glow">
+            <div class="widget-header">
+              <h3>Commit Activity vs Risk</h3>
+            </div>
+            <div class="heatmap-container" id="commit-heatmap">
+              <!-- JS Populated -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- REPOSITORIES PAGE -->
+    <div id="repos" class="page dashboard-layout">
+      <aside class="sidebar glass-panel">
+        <div class="sidebar-logo"><img src="/logo.png" alt="Logo"><span>BrutalAudit</span></div>
+        <div class="sidebar-nav">
+          <div class="nav-section">Main</div>
+          <div class="nav-item magnetic" data-navigate="dashboard"><span class="icon">📊</span> Overview</div>
+          <div class="nav-item active magnetic" data-navigate="repos"><span class="icon">📁</span> Repositories <span class="nav-badge">12</span></div>
+          <div class="nav-item magnetic" data-navigate="report"><span class="icon">📋</span> Reports</div>
+          <div class="nav-section">Analyze</div>
+          <div class="nav-item magnetic"><span class="icon">🔍</span> New Audit</div>
+          <div class="nav-item magnetic"><span class="icon">📈</span> Trends</div>
+          <div class="nav-item magnetic"><span class="icon">🔐</span> Security</div>
+          <div class="nav-section">Settings</div>
+          <div class="nav-item magnetic"><span class="icon">⚙️</span> Settings</div>
+          <div class="nav-item magnetic"><span class="icon">🔗</span> Integrations</div>
+        </div>
+        <div class="sidebar-profile">
+          <div class="profile-avatar premium-glow">AJ</div>
+          <div><div class="profile-name">Alex Johnson</div><div class="profile-handle">@alexjohnson</div></div>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="dash-header">
+          <div class="search-bar premium-input">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search repositories...">
+          </div>
+          <button class="btn-red premium-glow ripple-btn">+ Add Repository</button>
+        </div>
+
+        <div class="filters-row">
+          <button class="filter-btn active ripple-btn">All Repos</button>
+          <button class="filter-btn ripple-btn">High Risk</button>
+          <button class="filter-btn ripple-btn">Needs Audit</button>
+          <button class="filter-btn ripple-btn">Favorites</button>
+        </div>
+
+        <div class="repos-grid stagger-group" id="repos-container">
+          <!-- Populated by JS -->
+        </div>
+      </main>
+    </div>
+
+    <!-- REPORT PAGE -->
+    <div id="report" class="page dashboard-layout">
+      <aside class="sidebar glass-panel">
+        <div class="sidebar-logo"><img src="/logo.png" alt="Logo"><span>BrutalAudit</span></div>
+        <div class="sidebar-nav">
+          <div class="nav-section">Main</div>
+          <div class="nav-item magnetic" data-navigate="dashboard"><span class="icon">📊</span> Overview</div>
+          <div class="nav-item magnetic" data-navigate="repos"><span class="icon">📁</span> Repositories <span class="nav-badge">12</span></div>
+          <div class="nav-item active magnetic" data-navigate="report"><span class="icon">📋</span> Reports</div>
+          <div class="nav-section">Analyze</div>
+          <div class="nav-item magnetic"><span class="icon">🔍</span> New Audit</div>
+          <div class="nav-item magnetic"><span class="icon">📈</span> Trends</div>
+          <div class="nav-item magnetic"><span class="icon">🔐</span> Security</div>
+          <div class="nav-section">Settings</div>
+          <div class="nav-item magnetic"><span class="icon">⚙️</span> Settings</div>
+          <div class="nav-item magnetic"><span class="icon">🔗</span> Integrations</div>
+        </div>
+        <div class="sidebar-profile">
+          <div class="profile-avatar premium-glow">AJ</div>
+          <div><div class="profile-name">Alex Johnson</div><div class="profile-handle">@alexjohnson</div></div>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="report-header glass-panel anim-enter">
+          <button class="btn-ghost btn-sm ripple-btn" data-navigate="repos">← Back to Repos</button>
+          <div class="report-hero">
+            <div class="ring-container premium-ring big-ring">
+              <svg class="ring-svg" width="200" height="200" viewBox="0 0 200 200">
+                <circle class="ring-bg" cx="100" cy="100" r="88" stroke-width="12"/>
+                <circle class="ring-glow" cx="100" cy="100" r="88" stroke-width="12" stroke-dasharray="553" stroke-dashoffset="110"/>
+                <circle class="ring-fill" cx="100" cy="100" r="88" stroke-width="12" stroke-dasharray="553" stroke-dashoffset="110"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-score">82</div>
+              </div>
+            </div>
+            <div class="report-info">
+              <h1 class="report-name">frontend-monorepo</h1>
+              <div class="report-meta">
+                <span><span class="icon">🕒</span> Audited 2 mins ago</span>
+                <span><span class="icon">🌿</span> branch: main</span>
+                <span><span class="icon">commit</span> 7b82a1f</span>
+              </div>
+              <div class="report-tags">
+                <span class="report-tag">TypeScript</span>
+                <span class="report-tag">React</span>
+                <span class="report-tag">Next.js</span>
+              </div>
+              
+              <!-- Risk Meter -->
+              <div class="risk-wrap">
+                <div class="risk-labels"><span>Low Risk</span><span>High Risk</span></div>
+                <div class="risk-bar"><div class="risk-needle" style="left: 65%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="audit-tabs anim-enter" style="animation-delay: 0.1s">
+          <button class="audit-tab active ripple-btn" data-tab="security">Security (2)</button>
+          <button class="audit-tab ripple-btn" data-tab="architecture">Architecture (5)</button>
+          <button class="audit-tab ripple-btn" data-tab="performance">Performance (3)</button>
+          <button class="audit-tab ripple-btn" data-tab="ai-fixes">AI Fixes ✨</button>
+        </div>
+
+        <div class="audit-panels stagger-group">
+          <!-- Security Panel -->
+          <div class="audit-panel active" id="panel-security">
+            <div class="issues-list">
+              <div class="glass issue-card issue-critical hover-lift">
+                <div class="issue-header">
+                  <h4 class="issue-title">Hardcoded API Key in config.ts</h4>
+                  <span class="issue-badge badge-critical">Critical</span>
+                </div>
+                <p class="issue-desc">A Stripe secret key is exposed in plaintext. This is a severe security risk that could lead to unauthorized API usage.</p>
+                <div class="expand-hint">View code snippet ↓</div>
+                <div class="code-snippet">
+                  <span style="color:#f87171">- const STRIPE_SECRET = "sk_live_51H..."</span><br>
+                  <span style="color:#4ade80">+ const STRIPE_SECRET = process.env.STRIPE_SECRET</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global UI Overlays -->
+  <div class="toast-container" id="toast-container"></div>
+  
+  <div class="loading-overlay" id="loading-overlay" style="display:none">
+    <div class="loading-ring premium-glow"></div>
+    <div class="loading-text">Analyzing repository...</div>
+    <div class="loading-steps">
+      <div class="loading-step">Cloning code...</div>
+      <div class="loading-step">Running SAST...</div>
+      <div class="loading-step">AI Reasoning...</div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

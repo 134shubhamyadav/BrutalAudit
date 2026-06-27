@@ -1,0 +1,97 @@
+/* Buttons */
+.btn-red {
+  background: linear-gradient(135deg, var(--red-base), var(--red-deep));
+  color: #fff;
+  border: 1px solid rgba(255, 30, 30, 0.5);
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--red-glow);
+  transition: all var(--duration-fast) var(--ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-red:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--red-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, var(--red-bright), var(--red-base));
+}
+
+.btn-red:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  padding: 13px 32px;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-ghost:hover {
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+  background: rgba(255, 30, 30, 0.05);
+}
+
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.premium-glow {
+  animation: pulse-glow 3s infinite;
+}
+
+/* Badges */
+.badge-good { background: rgba(16, 185, 129, 0.1); color: var(--status-good); border: 1px solid rgba(16, 185, 129, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-critical { background: rgba(239, 68, 68, 0.1); color: var(--status-critical); border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+/* Inputs */
+.premium-input {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  transition: all var(--duration-fast) var(--ease);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.premium-input:focus-within {
+  border-color: var(--red-base);
+  box-shadow: 0 0 0 4px rgba(255, 30, 30, 0.1);
+  background: rgba(20, 20, 20, 0.6);
+}
+
+.premium-input input {
+  background: none; border: none; outline: none; flex: 1;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  padding: 14px 0;
+}
+
+/* Text */
+.grad-text {
+  background: linear-gradient(135deg, #fff 30%, var(--red-base));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

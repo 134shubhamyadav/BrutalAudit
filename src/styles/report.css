@@ -1,0 +1,54 @@
+/* ─── Report & Repos Pages ─── */
+
+.filters-row { display: flex; gap: 12px; margin-bottom: 24px; }
+.filter-btn {
+  background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px;
+  padding: 8px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+  color: var(--text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease);
+}
+.filter-btn:hover, .filter-btn.active {
+  border-color: var(--red-base); color: var(--text-primary); background: rgba(255, 30, 30, 0.1);
+}
+
+.repos-grid { display: grid; gap: 16px; }
+.repo-card { padding: 24px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+.repo-name { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.repo-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; }
+.repo-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+.repo-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
+.lang-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.score-pill { padding: 6px 16px; border-radius: 50px; font-size: 14px; font-weight: 700; border: 1px solid; font-family: 'Space Grotesk', sans-serif; }
+
+/* Report Header */
+.report-header { padding: 40px; margin-bottom: 32px; border-radius: 20px; }
+.report-hero { display: flex; gap: 40px; align-items: center; margin-top: 24px; }
+.big-ring { width: 200px; height: 200px; }
+.report-name { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+.report-meta { display: flex; gap: 24px; font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+.report-tags { display: flex; gap: 8px; }
+.report-tag { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 50px; font-size: 12px; }
+
+/* Risk Meter */
+.risk-wrap { margin-top: 24px; }
+.risk-bar { height: 8px; border-radius: 50px; background: linear-gradient(90deg, #10B981, #F59E0B, #EF4444); position: relative; margin: 12px 0; }
+.risk-needle { position: absolute; top: -6px; width: 4px; height: 20px; background: #fff; border-radius: 2px; box-shadow: 0 0 10px rgba(255,255,255,0.8); transition: left 1.5s var(--spring); }
+.risk-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+/* Audit Tabs & Panels */
+.audit-tabs { display: flex; border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; background: var(--glass-bg); }
+.audit-tab { flex: 1; padding: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease); }
+.audit-tab.active { background: rgba(255, 30, 30, 0.1); color: var(--text-primary); border-bottom: 2px solid var(--red-base); }
+.audit-tab:not(:last-child) { border-right: 1px solid var(--glass-border); }
+
+.audit-panel { display: none; }
+.audit-panel.active { display: block; animation: fadeUp 0.4s var(--ease) both; }
+
+.issues-list { display: flex; flex-direction: column; gap: 16px; }
+.issue-card { padding: 24px; border-left: 4px solid; cursor: pointer; }
+.issue-critical { border-left-color: var(--status-critical); }
+.issue-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.issue-title { font-size: 16px; font-weight: 600; }
+.issue-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.expand-hint { font-size: 12px; color: var(--text-muted); margin-top: 12px; }
+.code-snippet { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); border-radius: 8px; padding: 16px; margin-top: 16px; font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.6; display: none; }
+.issue-card.expanded .code-snippet { display: block; animation: fadeIn 0.3s var(--ease); }

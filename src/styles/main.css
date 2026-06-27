@@ -1,0 +1,11 @@
+@import './variables.css';
+@import './legacy.css';
+@import './global.css';
+@import './glass.css';
+@import './animations.css';
+@import './components.css';
+@import './auth.css';
+@import './layout.css';
+@import './hero.css';
+@import './dashboard.css';
+@import './report.css';
