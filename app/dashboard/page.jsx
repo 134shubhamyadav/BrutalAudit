@@ -116,9 +116,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Stat Cards */}
-        <div className="overview-cards stagger-group">
+        <div className="overview-cards stagger-group" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
           {loadingStats ? (
-            Array.from({ length: 3 }).map((_, i) => <StatCardSkeleton key={i} />)
+            Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
           ) : (
             <>
               <div className="glass ov-card hover-lift">
@@ -131,27 +131,77 @@ export default function DashboardPage() {
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change change-up">
-                  {stats?.avgScore ? `Grade ${scoreToGrade(stats.avgScore)}` : 'No data yet'}
+                  {stats?.avgScore ? `Grade ${scoreToGrade(stats.avgScore)}` : 'No audits'}
                 </div>
               </div>
+
               <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon">📁</div>
-                <div className="ov-label">Repos Audited</div>
-                <div className="ov-val">
-                  <AnimatedCounter target={stats?.uniqueRepos || 0} />
+                <div className="ov-icon glow-icon" style={{ color: '#3B82F6' }}>🛡️</div>
+                <div className="ov-label">Security Score</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <div className="ov-val">
+                    <AnimatedCounter target={stats?.avgSecurity || 0} />
+                  </div>
+                  <span className="ov-val-suffix">/100</span>
                 </div>
-                <div className="ov-change change-up">
-                  {stats?.totalAudits || 0} total audit{stats?.totalAudits !== 1 ? 's' : ''}
+                <div className="ov-change" style={{ color: '#10B981' }}>
+                  ✓ Core Vulnerability Safe
                 </div>
               </div>
+
               <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon red-icon">🔐</div>
-                <div className="ov-label">Critical Issues</div>
-                <div className="ov-val" style={{ color: criticalCount > 0 ? '#EF4444' : '#10B981' }}>
-                  <AnimatedCounter target={criticalCount} />
+                <div className="ov-icon glow-icon" style={{ color: '#F59E0B' }}>🏛️</div>
+                <div className="ov-label">Architecture Score</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <div className="ov-val">
+                    <AnimatedCounter target={stats?.avgArchitecture || 0} />
+                  </div>
+                  <span className="ov-val-suffix">/100</span>
                 </div>
-                <div className="ov-change" style={{ color: criticalCount > 0 ? '#EF4444' : '#10B981' }}>
-                  {criticalCount > 0 ? '⚠️ Needs action' : '✓ Clean'}
+                <div className="ov-change" style={{ color: '#a1a1aa' }}>
+                  Decoupled layers
+                </div>
+              </div>
+
+              <div className="glass ov-card hover-lift">
+                <div className="ov-icon glow-icon" style={{ color: '#EF4444' }}>🤖</div>
+                <div className="ov-label">AI Slop Score</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <div className="ov-val" style={{ color: (stats?.avgSlop || 0) < 50 ? '#EF4444' : '#FAFAFA' }}>
+                    <AnimatedCounter target={stats?.avgSlop || 0} />
+                  </div>
+                  <span className="ov-val-suffix">/100</span>
+                </div>
+                <div className="ov-change" style={{ color: (stats?.avgSlop || 0) < 50 ? '#EF4444' : '#22C55E' }}>
+                  {(stats?.avgSlop || 0) < 50 ? '⚠️ High AI generated slop' : '✓ Clean original code'}
+                </div>
+              </div>
+
+              <div className="glass ov-card hover-lift">
+                <div className="ov-icon glow-icon" style={{ color: '#22C55E' }}>🚀</div>
+                <div className="ov-label">Production Readiness</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <div className="ov-val">
+                    <AnimatedCounter target={stats?.avgReadiness || 0} />
+                  </div>
+                  <span className="ov-val-suffix">/100</span>
+                </div>
+                <div className="ov-change" style={{ color: '#22C55E' }}>
+                  Docker & CI pipelines
+                </div>
+              </div>
+
+              <div className="glass ov-card hover-lift">
+                <div className="ov-icon glow-icon" style={{ color: '#a1a1aa' }}>❤️</div>
+                <div className="ov-label">Repository Health</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                  <div className="ov-val">
+                    <AnimatedCounter target={stats?.avgHealth || 0} />
+                  </div>
+                  <span className="ov-val-suffix">/100</span>
+                </div>
+                <div className="ov-change" style={{ color: '#22C55E' }}>
+                  Good maintainability
                 </div>
               </div>
 

@@ -1,7 +1,35 @@
 import { supabase } from '../../../../../lib/supabase.js';
 
+// Simple in-memory rate limit (per serverless container)
+const rateLimit = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS = 60; // 60 requests per minute
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const record = rateLimit.get(ip);
+  if (!record) {
+    rateLimit.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (now > record.resetAt) {
+    rateLimit.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (record.count >= MAX_REQUESTS) {
+    return false;
+  }
+  record.count += 1;
+  return true;
+}
+
 export async function GET(request, { params }) {
   const { owner, repo } = await params;
+  
+  const ip = request.ip || request.headers.get('x-forwarded-for') || 'anonymous';
+  if (!checkRateLimit(ip)) {
+    return new Response('Rate limit exceeded', { status: 429 });
+  }
   
   const { data } = await supabase
     .from('audits')

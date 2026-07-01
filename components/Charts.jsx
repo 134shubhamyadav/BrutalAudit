@@ -27,18 +27,25 @@ export function ScoreRadarChart({ scores }) {
   if (!scores) return null;
 
   const data = {
-    labels: ['Security', 'Architecture', 'Performance'],
+    labels: ['Security', 'Architecture', 'Performance', 'AI Slop', 'DevOps', 'Readiness'],
     datasets: [
       {
         label: 'Score',
-        data: [scores.security || 0, scores.architecture || 0, scores.performance || 0],
-        backgroundColor: 'rgba(239, 68, 68, 0.25)', // Red premium glow
-        borderColor: '#EF4444',
+        data: [
+          scores.security || 0, 
+          scores.architecture || 0, 
+          scores.performance || 0,
+          scores.slop || 0,
+          scores.devops || 0,
+          scores.readiness || 0
+        ],
+        backgroundColor: 'rgba(59, 130, 246, 0.25)', // Premium blue highlight
+        borderColor: '#3B82F6',
         borderWidth: 2,
-        pointBackgroundColor: '#EF4444',
+        pointBackgroundColor: '#3B82F6',
         pointBorderColor: '#0a0a0a',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#EF4444',
+        pointHoverBorderColor: '#3B82F6',
         pointRadius: 4,
         pointHoverRadius: 6,
       },

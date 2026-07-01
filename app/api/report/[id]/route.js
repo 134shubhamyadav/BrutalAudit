@@ -1,4 +1,5 @@
 import { getAuditById } from '../../../../lib/supabase.js';
+import { getAuth } from '../../../../lib/auth-server.js';
 
 export async function GET(request, { params }) {
   const { id } = await params;
@@ -13,7 +14,12 @@ export async function GET(request, { params }) {
       return Response.json({ error: 'Audit not found' }, { status: 404 });
     }
 
-    // Reports are publicly readable (for sharing)
+    const { userId } = await getAuth(request);
+    if (!userId || audit.user_id !== userId) {
+      return Response.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Reports are now restricted to the owner
     return Response.json(audit);
   } catch (error) {
     return Response.json({ error: 'Failed to load audit' }, { status: 500 });

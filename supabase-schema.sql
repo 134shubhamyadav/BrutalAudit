@@ -12,6 +12,13 @@ CREATE TABLE IF NOT EXISTS audits (
                   CHECK (status IN ('pending', 'running', 'done', 'failed')),
   findings        JSONB,
   scores          JSONB,
+  security_score   INTEGER,
+  architecture_score INTEGER,
+  performance_score  INTEGER,
+  slop_score       INTEGER,
+  devops_score     INTEGER,
+  readiness_score  INTEGER,
+  health_score     INTEGER,
   summary         TEXT,
   repo_meta       JSONB,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -24,8 +31,8 @@ CREATE INDEX IF NOT EXISTS idx_audits_user_status ON audits (user_id, status, co
 CREATE INDEX IF NOT EXISTS idx_audits_repo ON audits (user_id, repo_full_name);
 
 -- ── Row Level Security ───────────────────────────────────────
--- Disabled because all database operations are server-side mediated and validated via Firebase Admin auth on the Next.js API.
-ALTER TABLE audits DISABLE ROW LEVEL SECURITY;
+-- Enabled to prevent unauthorized direct client queries. Next.js API uses service role key which bypasses RLS.
+ALTER TABLE audits ENABLE ROW LEVEL SECURITY;
 
 SELECT 'Schema created successfully' AS result;
 

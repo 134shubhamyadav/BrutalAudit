@@ -2,8 +2,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { initUI } from '../src/scripts/ui.js';
-import { initHero } from '../src/scripts/hero.js';
+import Image from 'next/image';
+import Link from 'next/link';
+import { HeroNetworkCanvas, InfiniteBadges } from '../components/HeroVisuals';
 import { api } from '../lib/api.js';
 import { useAuth } from '../components/AuthProvider';
 import SignInModal from '../components/SignInModal';
@@ -39,8 +40,6 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (!initialized.current) {
-        initUI();
-        initHero();
         initialized.current = true;
       }
       
@@ -68,7 +67,7 @@ export default function Home() {
 
   
     <nav id="main-nav" className="glass-nav">
-      <div className="logo" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo(0,0)}><img src="/logo.png" alt="Logo" /><span>BrutalAudit</span></div>
+      <div className="logo" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo(0,0)}><Image src="/logo.png" alt="Logo" width={24} height={24} /><span>BrutalAudit</span></div>
       <div className="nav-links">
         <span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo(0,0)}>Home</span>
         {isSignedIn && <span className="nav-link" style={{ cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>Dashboard</span>}
@@ -116,7 +115,7 @@ export default function Home() {
 
         
         <div className="hero-visual-container">
-          <canvas id="hero-network-canvas"></canvas>
+          <HeroNetworkCanvas />
         </div>
           
         <div className="hero-stats stagger-group">
@@ -129,7 +128,7 @@ export default function Home() {
             <div className="stat-label">Avg Code Grade</div>
           </div>
           <div className="glass stat-card hover-lift magnetic">
-            <div className="stat-num">3.2<span className="stat-red">s</span></div>
+            <div className="stat-num">{stats.loaded ? '3.2' : '...'}<span className="stat-red">s</span></div>
             <div className="stat-label">Avg Audit Time</div>
           </div>
         </div>
@@ -137,9 +136,7 @@ export default function Home() {
 
       
       <div className="badges-row">
-        <div className="badges-track" id="badges-track">
-          
-        </div>
+        <InfiniteBadges />
       </div>
 
       
@@ -189,17 +186,17 @@ export default function Home() {
           <div className="glass testi-card hover-lift">
             <div className="stars">★★★★★</div>
             <div className="testi-text">"BrutalAudit found a critical API key exposure in our repo that had been there for 8 months. No other tool caught it. This is essential."</div>
-            <div className="testi-author"><div className="avatar">SK</div><div><div className="author-name">Sarah Kim</div><div className="author-role">CTO at FinFlow</div></div></div>
+            <div className="testi-author"><div className="avatar">SK</div><div><div className="author-name">Sarah Kim</div><div className="author-role">Senior Developer</div></div></div>
           </div>
           <div className="glass testi-card hover-lift">
             <div className="stars">★★★★★</div>
             <div className="testi-text">"The architecture analysis is insane. It drew our entire dependency graph and identified a circular dependency chain we had missed for two years."</div>
-            <div className="testi-author"><div className="avatar">MR</div><div><div className="author-name">Marcus Rivera</div><div className="author-role">Staff Engineer at Stripe</div></div></div>
+            <div className="testi-author"><div className="avatar">MR</div><div><div className="author-name">Marcus Rivera</div><div className="author-role">Open Source Maintainer</div></div></div>
           </div>
           <div className="glass testi-card hover-lift">
             <div className="stars">★★★★★</div>
             <div className="testi-text">"We reduced our bundle size by 43% using the performance roadmap. The recommendations were specific, actionable, and ranked by actual impact."</div>
-            <div className="testi-author"><div className="avatar">AL</div><div><div className="author-name">Ava Lin</div><div className="author-role">Lead Dev at Vercel</div></div></div>
+            <div className="testi-author"><div className="avatar">AL</div><div><div className="author-name">Ava Lin</div><div className="author-role">Engineering Manager</div></div></div>
           </div>
         </div>
       </section>
@@ -217,7 +214,7 @@ export default function Home() {
             <div className="price-feature"><span className="check">✓</span> Basic audit report</div>
             <div className="price-feature"><span className="check">✓</span> Security scan</div>
             <div className="price-feature" style={{ opacity: 0.4 }}><span>✗</span> AI fix suggestions</div>
-            <div className="price-feature" style={{ opacity: 0.4 }}><span>✗</span> PDF export</div>
+            <div className="price-feature" style={{ opacity: 0.4 }}><span>✗</span> Detailed code insights</div>
             <div style={{ marginTop: '24px' }}>
               {!isSignedIn ? (
                 <button className="btn-ghost ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Get Started Free</button>
@@ -235,7 +232,7 @@ export default function Home() {
             <div className="price-feature"><span className="check">✓</span> Unlimited repos</div>
             <div className="price-feature"><span className="check">✓</span> Full audit report</div>
             <div className="price-feature"><span className="check">✓</span> AI fix suggestions</div>
-            <div className="price-feature"><span className="check">✓</span> PDF export</div>
+            <div className="price-feature"><span className="check">✓</span> Detailed code insights</div>
             <div className="price-feature"><span className="check">✓</span> Priority support</div>
             <div style={{ marginTop: '24px' }}>
               {!isSignedIn ? (
@@ -282,8 +279,8 @@ export default function Home() {
         <div className="footer-bottom">
           <div className="footer-copy">© 2026 BrutalAudit. All rights reserved.</div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <a style={{ fontSize: '13px', color: 'var(--text3)', textDecoration: 'none', cursor: 'pointer' }}>Privacy</a>
-            <a style={{ fontSize: '13px', color: 'var(--text3)', textDecoration: 'none', cursor: 'pointer' }}>Terms</a>
+            <Link href="/privacy" style={{ fontSize: '13px', color: 'var(--text3)', textDecoration: 'none', cursor: 'pointer' }}>Privacy</Link>
+            <Link href="/terms" style={{ fontSize: '13px', color: 'var(--text3)', textDecoration: 'none', cursor: 'pointer' }}>Terms</Link>
           </div>
         </div>
       </footer>
