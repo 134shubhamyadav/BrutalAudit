@@ -14,8 +14,11 @@
   --text-secondary: #9CA3AF;
   --text-muted: #71717A;
   
-  /* Glassmorphism */
-  --glass-bg: rgba(18, 20, 23, 0.65);
+  /* Glassmorphism System */
+  --glass-bg-1: rgba(18, 20, 23, 0.4);
+  --glass-bg-2: rgba(18, 20, 23, 0.65);
+  --glass-bg-3: rgba(10, 10, 10, 0.85);
+  
   --glass-border-hover: rgba(59, 130, 246, 0.35);
   --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
@@ -26,10 +29,12 @@
   --status-info: #3B82F6;
   --status-good: #22C55E;
   
-  /* Transitions */
-  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --duration-fast: 0.2s;
-  --duration-normal: 0.4s;
-  --duration-slow: 0.8s;
+  /* Transitions & Animation System */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
 }

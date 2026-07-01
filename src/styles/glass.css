@@ -1,8 +1,8 @@
 /* ─── Premium Glassmorphism ─── */
 .glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: var(--glass-bg-2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   box-shadow: var(--glass-highlight), var(--glass-shadow);
@@ -22,8 +22,8 @@
 
 .glass-panel {
   background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-highlight);
 }
@@ -37,16 +37,16 @@
   align-items: center;
   justify-content: space-between;
   background: rgba(3, 3, 3, 0.75);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-border);
   box-shadow: 0 4px 30px rgba(0,0,0,0.5);
 }
 
 .hover-lift {
-  transition: transform var(--duration-fast) var(--spring), 
-              border-color var(--duration-fast) var(--ease),
-              box-shadow var(--duration-fast) var(--ease);
+  transition: transform var(--duration-fast) var(--ease-spring), 
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .hover-lift:hover {
@@ -56,7 +56,7 @@
 }
 
 .hover-glow {
-  transition: all var(--duration-fast) var(--ease);
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .hover-glow:hover {

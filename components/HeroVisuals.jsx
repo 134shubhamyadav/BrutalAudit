@@ -20,6 +20,8 @@ export function HeroNetworkCanvas() {
       height = parent.clientHeight;
       canvas.width = width * (window.devicePixelRatio || 1);
       canvas.height = height * (window.devicePixelRatio || 1);
+      // Reset transform before scaling to prevent compounding on resize
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
       initParticles();
     }
@@ -58,9 +60,12 @@ export function HeroNetworkCanvas() {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          // Optimization: use distance squared to avoid Math.sqrt in the hot loop
+          const distSq = dx * dx + dy * dy;
+          const maxDistSq = 22500; // 150 * 150
           
-          if (dist < 150) {
+          if (distSq < maxDistSq) {
+            const dist = Math.sqrt(distSq);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -73,13 +78,26 @@ export function HeroNetworkCanvas() {
       animationFrameId = requestAnimationFrame(draw);
     }
 
+    let isVisible = true;
+    const observer = new IntersectionObserver((entries) => {
+      isVisible = entries[0].isIntersecting;
+      if (isVisible && !animationFrameId) {
+        draw();
+      } else if (!isVisible && animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    });
+    observer.observe(canvas);
+
     window.addEventListener('resize', resize);
     resize();
     draw();
 
     return () => {
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 

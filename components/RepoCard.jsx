@@ -1,5 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import MagneticCard from './MagneticCard';
+import { Star, Lock, GitBranch } from 'lucide-react';
 
 const LANG_COLORS = {
   TypeScript: '#3178c6', JavaScript: '#f1e05a', Python: '#3572A5',
@@ -34,14 +36,14 @@ function timeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-export default function RepoCard({ repo, lastAudit, onAudit, onDetailedAudit, isAuditing }) {
+export default function RepoCard({ repo, lastAudit, onAudit, onDetailedAudit, isAuditing, index = 0 }) {
   const router = useRouter();
   const grade = lastAudit ? scoreToGrade(lastAudit.scores?.overall || 0) : null;
   const gradeStyle = grade ? GRADE_CONFIG[grade] : null;
   const langColor = LANG_COLORS[repo.language] || '#888';
 
   return (
-    <div className="glass repo-card hover-lift magnetic">
+    <MagneticCard className="glass repo-card hover-lift" style={{ '--i': index + 1 }}>
       <div>
         <div className="repo-name">
           {repo.name}
@@ -64,9 +66,9 @@ export default function RepoCard({ repo, lastAudit, onAudit, onDetailedAudit, is
           {repo.isPrivate && (
             <span
               className="score-pill"
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', borderColor: 'rgba(255,255,255,0.08)', marginLeft: '4px' }}
+              style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', borderColor: 'rgba(255,255,255,0.08)', marginLeft: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
             >
-              🔒 Private
+              <Lock size={12} /> Private
             </span>
           )}
         </div>
@@ -76,7 +78,9 @@ export default function RepoCard({ repo, lastAudit, onAudit, onDetailedAudit, is
             <span className="lang-dot" style={{ background: langColor }}></span>
             {repo.language}
           </span>
-          <span className="repo-stat">⭐ {repo.stars?.toLocaleString() || 0}</span>
+          <span className="repo-stat" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <Star size={14} className="lucide-icon" /> {repo.stars?.toLocaleString() || 0}
+          </span>
           <span className="repo-stat">
             {lastAudit ? `Last audit: ${timeAgo(lastAudit.completed_at)}` : 'Never audited'}
           </span>
@@ -112,6 +116,6 @@ export default function RepoCard({ repo, lastAudit, onAudit, onDetailedAudit, is
           Detailed Audit
         </button>
       </div>
-    </div>
+    </MagneticCard>
   );
 }

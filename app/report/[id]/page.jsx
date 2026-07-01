@@ -7,14 +7,15 @@ import ScoreRing from '../../../components/ScoreRing.jsx';
 import { IssueCardSkeleton } from '../../../components/SkeletonCard.jsx';
 import EmptyState, { ErrorState } from '../../../components/EmptyState.jsx';
 import { ScoreRadarChart } from '../../../components/Charts.jsx';
+import { ShieldAlert, FileCode, Zap, Bug, Bot } from 'lucide-react';
 import { api } from '../../../lib/api.js';
 
 const TAB_TYPES = {
-  security:     { label: 'Security',     icon: '🔐', type: 'security' },
-  architecture: { label: 'Architecture', icon: '🏗️', type: 'architecture' },
-  performance:  { label: 'Performance',  icon: '⚡', type: 'performance' },
-  code_smell:   { label: 'Code Quality', icon: '🧪', type: 'code_smell' },
-  'ai-fixes':   { label: 'AI Fixes ✨',  icon: '🤖', type: null }, // all findings with a fix
+  security:     { label: 'Security',     icon: <ShieldAlert size={16} />, type: 'security' },
+  architecture: { label: 'Architecture', icon: <FileCode size={16} />, type: 'architecture' },
+  performance:  { label: 'Performance',  icon: <Zap size={16} />, type: 'performance' },
+  code_smell:   { label: 'Code Quality', icon: <Bug size={16} />, type: 'code_smell' },
+  'ai-fixes':   { label: 'AI Fixes ✨',  icon: <Bot size={16} />, type: null },
 };
 
 function timeAgo(dateStr) {
@@ -324,8 +325,9 @@ export default function ReportPage({ params }) {
                 key={key}
                 className={`audit-tab ripple-btn${activeTab === key ? ' active' : ''}`}
                 onClick={() => setActiveTab(key)}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
-                {tab.label} {count > 0 && `(${count})`}
+                {tab.icon} {tab.label} {count > 0 && `(${count})`}
               </button>
             );
           })}
@@ -333,7 +335,7 @@ export default function ReportPage({ params }) {
 
         {/* Panel */}
         <div className="audit-panels stagger-group">
-          <div className="audit-panel active">
+          <div key={activeTab} className="audit-panel active anim-enter">
             <div className="issues-list">
               {(() => {
                 const findings = getTabFindings(activeTab);
@@ -353,7 +355,9 @@ export default function ReportPage({ params }) {
                 }
 
                 return findings.map((finding, i) => (
-                  <IssueCard key={i} finding={finding} />
+                  <div key={i} className="anim-enter" style={{ animationDelay: `${i * 0.05}s` }}>
+                    <IssueCard finding={finding} />
+                  </div>
                 ));
               })()}
             </div>

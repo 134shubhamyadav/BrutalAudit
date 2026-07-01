@@ -6,6 +6,9 @@ import Sidebar from '../../components/Sidebar.jsx';
 import { StatCardSkeleton, RepoCardSkeleton } from '../../components/SkeletonCard.jsx';
 import EmptyState, { ErrorState } from '../../components/EmptyState.jsx';
 import { ScoreRadarChart, TrendsLineChart } from '../../components/Charts.jsx';
+import AnimatedCounter from '../../components/AnimatedCounter';
+import MagneticCard from '../../components/MagneticCard';
+import { BarChart3, ShieldCheck, Component, Cpu, Rocket, HeartPulse } from 'lucide-react';
 import { api } from '../../lib/api.js';
 
 function timeAgo(dateStr) {
@@ -33,26 +36,7 @@ function scoreToGrade(score) {
   return 'D';
 }
 
-function AnimatedCounter({ target }) {
-  const [value, setValue] = useState(0);
-  const ref = useRef(null);
 
-  useEffect(() => {
-    if (target === 0) return;
-    const duration = 1500;
-    const steps = 40;
-    const increment = target / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current = Math.min(current + increment, target);
-      setValue(Math.ceil(current));
-      if (current >= target) clearInterval(timer);
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [target]);
-
-  return <span ref={ref}>{value}</span>;
-}
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -121,89 +105,89 @@ export default function DashboardPage() {
             Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
           ) : (
             <>
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon">📊</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 1 }}>
+                <div className="ov-icon glow-icon"><BarChart3 size={24} /></div>
                 <div className="ov-label">Overall Score</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter target={stats?.avgScore || 0} />
+                    <AnimatedCounter end={stats?.avgScore || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change change-up">
                   {stats?.avgScore ? `Grade ${scoreToGrade(stats.avgScore)}` : 'No audits'}
                 </div>
-              </div>
+              </MagneticCard>
 
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon" style={{ color: '#3B82F6' }}>🛡️</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 2 }}>
+                <div className="ov-icon glow-icon" style={{ color: '#3B82F6' }}><ShieldCheck size={24} /></div>
                 <div className="ov-label">Security Score</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter target={stats?.avgSecurity || 0} />
+                    <AnimatedCounter end={stats?.avgSecurity || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change" style={{ color: '#10B981' }}>
                   ✓ Core Vulnerability Safe
                 </div>
-              </div>
+              </MagneticCard>
 
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon" style={{ color: '#F59E0B' }}>🏛️</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 3 }}>
+                <div className="ov-icon glow-icon" style={{ color: '#F59E0B' }}><Component size={24} /></div>
                 <div className="ov-label">Architecture Score</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter target={stats?.avgArchitecture || 0} />
+                    <AnimatedCounter end={stats?.avgArchitecture || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change" style={{ color: '#a1a1aa' }}>
                   Decoupled layers
                 </div>
-              </div>
+              </MagneticCard>
 
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon" style={{ color: '#EF4444' }}>🤖</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 4 }}>
+                <div className="ov-icon glow-icon" style={{ color: '#EF4444' }}><Cpu size={24} /></div>
                 <div className="ov-label">AI Slop Score</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val" style={{ color: (stats?.avgSlop || 0) < 50 ? '#EF4444' : '#FAFAFA' }}>
-                    <AnimatedCounter target={stats?.avgSlop || 0} />
+                    <AnimatedCounter end={stats?.avgSlop || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change" style={{ color: (stats?.avgSlop || 0) < 50 ? '#EF4444' : '#22C55E' }}>
                   {(stats?.avgSlop || 0) < 50 ? '⚠️ High AI generated slop' : '✓ Clean original code'}
                 </div>
-              </div>
+              </MagneticCard>
 
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon" style={{ color: '#22C55E' }}>🚀</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 5 }}>
+                <div className="ov-icon glow-icon" style={{ color: '#22C55E' }}><Rocket size={24} /></div>
                 <div className="ov-label">Production Readiness</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter target={stats?.avgReadiness || 0} />
+                    <AnimatedCounter end={stats?.avgReadiness || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change" style={{ color: '#22C55E' }}>
                   Docker & CI pipelines
                 </div>
-              </div>
+              </MagneticCard>
 
-              <div className="glass ov-card hover-lift">
-                <div className="ov-icon glow-icon" style={{ color: '#a1a1aa' }}>❤️</div>
+              <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 6 }}>
+                <div className="ov-icon glow-icon" style={{ color: '#a1a1aa' }}><HeartPulse size={24} /></div>
                 <div className="ov-label">Repository Health</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter target={stats?.avgHealth || 0} />
+                    <AnimatedCounter end={stats?.avgHealth || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
                 <div className="ov-change" style={{ color: '#22C55E' }}>
                   Good maintainability
                 </div>
-              </div>
+              </MagneticCard>
 
             </>
           )}

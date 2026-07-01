@@ -76,6 +76,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:fl
 .price-period{font-size:14px;color:var(--text3)}
 .price-divider{height:1px;background:var(--border);margin:24px 0}
 .price-feature{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);margin-bottom:12px}
+.price-feature.disabled { opacity: 0.4; }
+.lucide-icon { display: inline-block; vertical-align: middle; }
 .check{color:var(--red);font-size:16px}
 .price-badge{display:inline-block;background:rgba(255,30,30,0.15);color:var(--red);border:1px solid rgba(255,30,30,0.3);border-radius:50px;padding:4px 14px;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:16px}
 

@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar.jsx';
 import RepoCard from '../../components/RepoCard.jsx';
 import { RepoCardSkeleton } from '../../components/SkeletonCard.jsx';
 import EmptyState, { ErrorState } from '../../components/EmptyState.jsx';
+import LoadingOverlay from '../../components/LoadingOverlay.jsx';
 import { api } from '../../lib/api.js';
 
 export default function ReposPage() {
@@ -230,7 +231,7 @@ export default function ReposPage() {
             </div>
           )}
 
-          {!loading && !error && displayedRepos.map((repo) => (
+          {!loading && !error && displayedRepos.map((repo, idx) => (
             <RepoCard
               key={repo.id}
               repo={repo}
@@ -238,38 +239,15 @@ export default function ReposPage() {
               onAudit={handleAudit}
               onDetailedAudit={(r) => { setDetailedAuditModalRepo(r); setCustomPrompt(''); }}
               isAuditing={auditingRepo === repo.fullName}
+              index={idx}
             />
           ))}
         </div>
 
         {/* Loading Overlay for Active Audit */}
-        {auditingRepo && (() => {
-          const steps = [
-            { key: 'fetching', label: 'Fetching file tree…' },
-            { key: 'analyzing', label: 'Running AI analysis…' },
-            { key: 'saving', label: 'Generating report…' },
-          ];
-          const activeIndex = steps.findIndex(s => s.key === auditStep);
-
-          return (
-            <div className="loading-overlay" style={{ display: 'flex' }}>
-              <div className="loading-ring premium-glow"></div>
-              <div className="loading-text">Analyzing repository…</div>
-              <div className="loading-steps">
-                {steps.map((step, idx) => (
-                  <div
-                    key={step.key}
-                    className={`loading-step ${auditStep === step.key ? 'active' : ''} ${
-                      activeIndex > idx ? 'done' : ''
-                    }`}
-                  >
-                    {step.label}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
+        {auditingRepo && (
+          <LoadingOverlay repoName={auditingRepo} currentStep={auditStep} />
+        )}
 
         {/* Detailed Audit Modal */}
         {detailedAuditModalRepo && (

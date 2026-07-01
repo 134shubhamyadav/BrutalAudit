@@ -1,6 +1,9 @@
 'use client';
 import { useState } from 'react';
 
+import { ShieldAlert, Architecture, Zap, Bug, FileCode } from 'lucide-react';
+import ShikiCode from './ShikiCode';
+
 const SEVERITY_CONFIG = {
   critical: { color: '#EF4444', bg: 'rgba(239,68,68,0.1)', label: 'Critical', borderLeft: '#EF4444' },
   high:     { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', label: 'High',     borderLeft: '#F59E0B' },
@@ -9,16 +12,16 @@ const SEVERITY_CONFIG = {
 };
 
 const TYPE_ICONS = {
-  security:     '🔐',
-  architecture: '🏗️',
-  performance:  '⚡',
-  code_smell:   '🧪',
+  security:     <ShieldAlert size={18} />,
+  architecture: <FileCode size={18} />,
+  performance:  <Zap size={18} />,
+  code_smell:   <Bug size={18} />,
 };
 
 export default function IssueCard({ finding }) {
   const [expanded, setExpanded] = useState(false);
   const config = SEVERITY_CONFIG[finding.severity] || SEVERITY_CONFIG.medium;
-  const icon = TYPE_ICONS[finding.type || finding.category] || '📋';
+  const icon = TYPE_ICONS[finding.type || finding.category] || <FileCode size={18} />;
   const hasDetailedInfo = finding.recommendation || finding.example_fix || finding.business_impact;
 
   return (
@@ -28,8 +31,8 @@ export default function IssueCard({ finding }) {
       onClick={() => setExpanded(!expanded)}
     >
       <div className="issue-header">
-        <h4 className="issue-title">
-          <span style={{ marginRight: '8px' }}>{icon}</span>
+        <h4 className="issue-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {icon}
           {finding.title}
         </h4>
         <span
@@ -80,8 +83,8 @@ export default function IssueCard({ finding }) {
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Suggested Fix / Recommendation
               </div>
-              <div style={{ color: 'var(--text-secondary)', fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.6', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                {finding.fix || finding.recommendation}
+              <div style={{ marginTop: '8px' }}>
+                <ShikiCode code={finding.fix || finding.recommendation} />
               </div>
             </div>
           )}
@@ -91,8 +94,8 @@ export default function IssueCard({ finding }) {
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Example Implementation
               </div>
-              <div style={{ color: 'var(--text-secondary)', fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.6', whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '6px' }}>
-                {finding.example_fix}
+              <div style={{ marginTop: '8px' }}>
+                <ShikiCode code={finding.example_fix} />
               </div>
             </div>
           )}

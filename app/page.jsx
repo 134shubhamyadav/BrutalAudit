@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HeroNetworkCanvas, InfiniteBadges } from '../components/HeroVisuals';
+import AnimatedCounter from '../components/AnimatedCounter';
+import MagneticCard from '../components/MagneticCard';
+import { Shield, Network, Zap, TestTube, BookOpen, Cpu, Check, X } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { useAuth } from '../components/AuthProvider';
 import SignInModal from '../components/SignInModal';
@@ -119,18 +122,18 @@ export default function Home() {
         </div>
           
         <div className="hero-stats stagger-group">
-          <div className="glass stat-card hover-lift magnetic">
-            <div className="stat-num">{stats.loaded ? stats.totalAudits.toLocaleString() : '...'}<span className="stat-red">+</span></div>
+          <MagneticCard className="glass stat-card hover-lift" style={{ '--i': 1 }}>
+            <div className="stat-num">{stats.loaded ? <AnimatedCounter end={stats.totalAudits} /> : '...'}<span className="stat-red">+</span></div>
             <div className="stat-label">Repos Analyzed</div>
-          </div>
-          <div className="glass stat-card hover-lift magnetic">
-            <div className="stat-num">{stats.loaded ? stats.avgScore : '...'}<span className="stat-red">/100</span></div>
+          </MagneticCard>
+          <MagneticCard className="glass stat-card hover-lift" style={{ '--i': 2 }}>
+            <div className="stat-num">{stats.loaded ? <AnimatedCounter end={stats.avgScore} /> : '...'}<span className="stat-red">/100</span></div>
             <div className="stat-label">Avg Code Grade</div>
-          </div>
-          <div className="glass stat-card hover-lift magnetic">
+          </MagneticCard>
+          <MagneticCard className="glass stat-card hover-lift" style={{ '--i': 3 }}>
             <div className="stat-num">{stats.loaded ? '3.2' : '...'}<span className="stat-red">s</span></div>
             <div className="stat-label">Avg Audit Time</div>
-          </div>
+          </MagneticCard>
         </div>
       </section>
 
@@ -145,34 +148,33 @@ export default function Home() {
         <h2 className="section-title">Everything you need to<br />ship better code.</h2>
         <p className="section-sub">Deep static analysis meets AI reasoning to surface what linters miss.</p>
         <div className="features-grid stagger-group">
-          
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">🔐</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 1 }}>
+            <div className="feature-icon"><Shield className="lucide-icon" size={28} /></div>
             <div className="feature-title">Security Scanning</div>
             <div className="feature-desc">CVE detection, secret exposure, SQL injection vectors, and dependency vulnerabilities mapped to OWASP top 10.</div>
           </div>
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">🏗️</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 2 }}>
+            <div className="feature-icon"><Network className="lucide-icon" size={28} /></div>
             <div className="feature-title">Architecture Analysis</div>
             <div className="feature-desc">Circular dependencies, coupling metrics, separation of concerns, and design pattern recognition across your entire codebase.</div>
           </div>
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">⚡</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 3 }}>
+            <div className="feature-icon"><Zap className="lucide-icon" size={28} /></div>
             <div className="feature-title">Performance Profiling</div>
             <div className="feature-desc">Bundle bloat, N+1 queries, memory leaks, and algorithmic complexity analysis with fix suggestions.</div>
           </div>
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">🧪</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 4 }}>
+            <div className="feature-icon"><TestTube className="lucide-icon" size={28} /></div>
             <div className="feature-title">Test Coverage</div>
             <div className="feature-desc">Coverage gaps, flaky test detection, missing edge cases, and test quality scoring with mutation analysis.</div>
           </div>
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">📚</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 5 }}>
+            <div className="feature-icon"><BookOpen className="lucide-icon" size={28} /></div>
             <div className="feature-title">Documentation Score</div>
             <div className="feature-desc">Inline comments, README quality, API docs completeness, and changelog hygiene evaluated and graded.</div>
           </div>
-          <div className="glass feature-card hover-glow">
-            <div className="feature-icon">🤖</div>
+          <div className="glass feature-card hover-glow" style={{ '--i': 6 }}>
+            <div className="feature-icon"><Cpu className="lucide-icon" size={28} /></div>
             <div className="feature-title">AI Fix Suggestions</div>
             <div className="feature-desc">Not just problems: GPT-4 generated refactoring plans, ordered by impact and grouped by effort level.</div>
           </div>
@@ -210,11 +212,11 @@ export default function Home() {
             <div className="price-amount">$0</div>
             <div className="price-period">Forever free</div>
             <div className="price-divider"></div>
-            <div className="price-feature"><span className="check">✓</span> 3 repos / month</div>
-            <div className="price-feature"><span className="check">✓</span> Basic audit report</div>
-            <div className="price-feature"><span className="check">✓</span> Security scan</div>
-            <div className="price-feature" style={{ opacity: 0.4 }}><span>✗</span> AI fix suggestions</div>
-            <div className="price-feature" style={{ opacity: 0.4 }}><span>✗</span> Detailed code insights</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> 3 repos / month</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Basic audit report</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Security scan</div>
+            <div className="price-feature disabled"><X size={16} /> AI fix suggestions</div>
+            <div className="price-feature disabled"><X size={16} /> Detailed code insights</div>
             <div style={{ marginTop: '24px' }}>
               {!isSignedIn ? (
                 <button className="btn-ghost ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Get Started Free</button>
@@ -229,11 +231,11 @@ export default function Home() {
             <div className="price-amount">$29<span style={{ fontSize: '20px', color: 'var(--text3)' }}>/mo</span></div>
             <div className="price-period">Per workspace</div>
             <div className="price-divider"></div>
-            <div className="price-feature"><span className="check">✓</span> Unlimited repos</div>
-            <div className="price-feature"><span className="check">✓</span> Full audit report</div>
-            <div className="price-feature"><span className="check">✓</span> AI fix suggestions</div>
-            <div className="price-feature"><span className="check">✓</span> Detailed code insights</div>
-            <div className="price-feature"><span className="check">✓</span> Priority support</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Unlimited repos</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Full audit report</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> AI fix suggestions</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Detailed code insights</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Priority support</div>
             <div style={{ marginTop: '24px' }}>
               {!isSignedIn ? (
                 <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Start Pro Trial</button>
@@ -247,11 +249,11 @@ export default function Home() {
             <div className="price-amount">Custom</div>
             <div className="price-period">Contact us</div>
             <div className="price-divider"></div>
-            <div className="price-feature"><span className="check">✓</span> Everything in Pro</div>
-            <div className="price-feature"><span className="check">✓</span> SSO / SAML</div>
-            <div className="price-feature"><span className="check">✓</span> On-premise option</div>
-            <div className="price-feature"><span className="check">✓</span> SLA guarantee</div>
-            <div className="price-feature"><span className="check">✓</span> Dedicated CSM</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Everything in Pro</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> SSO / SAML</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> On-premise option</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> SLA guarantee</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Dedicated CSM</div>
             <div style={{ marginTop: '24px' }}><button className="btn-ghost ripple-btn" style={{ width: '100%' }}>Talk to Sales</button></div>
           </div>
         </div>
