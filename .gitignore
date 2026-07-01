@@ -23,3 +23,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test scripts containing credentials
+test-*.cjs
+
+# Env files
+.env
+.env.*
+!.env.example
