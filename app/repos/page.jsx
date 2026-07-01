@@ -75,6 +75,11 @@ export default function ReposPage() {
       console.warn('Failed to attach Firebase token to stream', e);
     }
 
+    const storedGithubToken = typeof window !== 'undefined' ? localStorage.getItem('githubToken') : null;
+    if (storedGithubToken) {
+      params.append('githubToken', storedGithubToken);
+    }
+
     const eventSource = new EventSource(`/api/audit/stream?${params.toString()}`);
 
     eventSource.addEventListener('progress', (e) => {

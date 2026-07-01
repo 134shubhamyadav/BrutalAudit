@@ -42,7 +42,7 @@ export async function GET(request) {
           throw new Error('Audit limit reached. You can run 5 audits per hour.');
         }
         
-        let githubToken = null;
+        let githubToken = searchParams.get('githubToken') || null;
 
         const auditRecord = await createAudit({
           userId,
@@ -56,10 +56,13 @@ export async function GET(request) {
         
         send('progress', { step: 'fetching', message: 'Fetching repository files…' });
 
-        const [repoMeta, fileTree, commitSha] = await Promise.all([
-          getRepoMeta(owner, repo, githubToken),
-          getRepoFileTree(owner, repo, 'main', githubToken),
-          getLatestCommitSha(owner, repo, 'main', githubToken),
+        // Fetch repo metadata first to resolve default branch dynamically
+        const repoMeta = await getRepoMeta(owner, repo, githubToken);
+        const defaultBranch = repoMeta.defaultBranch || 'main';
+
+        const [fileTree, commitSha] = await Promise.all([
+          getRepoFileTree(owner, repo, defaultBranch, githubToken),
+          getLatestCommitSha(owner, repo, defaultBranch, githubToken),
         ]);
 
         if (commitSha && !customPrompt) {

@@ -2,26 +2,7 @@ import { getAuth } from '../../../lib/auth-server.js';
 import { getRepoFileTree, getFileContent, getRepoMeta } from '../../../lib/github.js';
 import { runAudit, runDetailedAudit } from '../../../lib/groq.js';
 import { createAudit, updateAudit } from '../../../lib/supabase.js';
-
-// Rate limit: 5 audits per hour per user
-const auditRateLimit = new Map();
-
-function checkAuditLimit(userId) {
-  const now = Date.now();
-  const windowMs = 3600000; // 1 hour
-  const key = `audit:${userId}`;
-  const record = auditRateLimit.get(key) || { count: 0, resetAt: now + windowMs };
-
-  if (now > record.resetAt) {
-    record.count = 1;
-    record.resetAt = now + windowMs;
-  } else {
-    record.count++;
-  }
-
-  auditRateLimit.set(key, record);
-  return { allowed: record.count <= 5, remaining: Math.max(0, 5 - record.count) };
-}
+import { checkAuditLimit } from '../../../lib/rateLimit.js';
 
 function validateRepoInput(owner, repo) {
   const repoNameRegex = /^[a-zA-Z0-9._-]+$/;
@@ -56,7 +37,7 @@ export async function POST(request) {
     }
 
     // Rate limit check
-    const { allowed, remaining } = checkAuditLimit(userId);
+    const { allowed, remaining } = await checkAuditLimit(userId);
     if (!allowed) {
       return Response.json(
         { error: 'Audit limit reached. You can run 5 audits per hour.' },
@@ -79,11 +60,11 @@ export async function POST(request) {
     // Mark as running
     await updateAudit(auditId, { status: 'running' });
 
-    // Fetch repo metadata
-    const [repoMeta, fileTree] = await Promise.all([
-      getRepoMeta(owner, repo, githubToken),
-      getRepoFileTree(owner, repo, 'main', githubToken),
-    ]);
+    // Fetch repo metadata first to resolve default branch dynamically
+    const repoMeta = await getRepoMeta(owner, repo, githubToken);
+    const defaultBranch = repoMeta.defaultBranch || 'main';
+
+    const fileTree = await getRepoFileTree(owner, repo, defaultBranch, githubToken);
 
     if (fileTree.length === 0) {
       await updateAudit(auditId, { status: 'failed' });

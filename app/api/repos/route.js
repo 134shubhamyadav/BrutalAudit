@@ -32,35 +32,39 @@ export async function GET(request) {
       return Response.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
     }
 
-    // Get the user's GitHub numeric ID from the request headers
+    // Get GitHub token or UID from request headers
     const githubUid = request.headers.get('x-github-uid');
+    const githubToken = request.headers.get('x-github-token');
     
-    if (!githubUid) {
+    if (!githubUid && !githubToken) {
       return Response.json({ repos: [], authenticated: false });
     }
 
-    // Since we don't have the GitHub OAuth token persisted, we'll fetch the user's public repos
-    // First, convert their numeric GitHub ID to a GitHub username
-    const fetchHeaders = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'BrutalAudit/1.0' };
-    if (process.env.GITHUB_ACCESS_TOKEN) {
-      fetchHeaders['Authorization'] = `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`;
-    }
+    let repos = [];
+    if (githubToken) {
+      // If we have an OAuth token, we can query GitHub's user repos endpoint directly
+      repos = await getUserRepos(githubToken, null);
+    } else if (githubUid) {
+      // Convert their numeric GitHub ID to a GitHub username to fetch public repos
+      const fetchHeaders = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'BrutalAudit/1.0' };
+      if (process.env.GITHUB_ACCESS_TOKEN) {
+        fetchHeaders['Authorization'] = `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`;
+      }
 
-    const userRes = await fetch(`https://api.github.com/user/${githubUid}`, {
-      headers: fetchHeaders
-    });
-    
-    if (!userRes.ok) {
-       console.error(`Failed to fetch github user info for uid ${githubUid}:`, userRes.status, await userRes.text());
-       return Response.json({ repos: [], authenticated: true });
-    }
-    
-    const githubUser = await userRes.json();
-    const githubUsername = githubUser.login;
+      const userRes = await fetch(`https://api.github.com/user/${githubUid}`, {
+        headers: fetchHeaders
+      });
+      
+      if (!userRes.ok) {
+         console.error(`Failed to fetch github user info for uid ${githubUid}:`, userRes.status, await userRes.text());
+         return Response.json({ repos: [], authenticated: true });
+      }
+      
+      const githubUser = await userRes.json();
+      const githubUsername = githubUser.login;
 
-    // Fetch their public repos using the username, or all repos if we have the token
-    let githubToken = request.headers.get('x-github-token');
-    const repos = await getUserRepos(githubToken, githubUsername);
+      repos = await getUserRepos(null, githubUsername);
+    }
     
     return Response.json({ repos, authenticated: true });
 
