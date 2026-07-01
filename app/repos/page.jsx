@@ -23,6 +23,7 @@ export default function ReposPage() {
   const [auditSuccess, setAuditSuccess] = useState(null);
   const [detailedAuditModalRepo, setDetailedAuditModalRepo] = useState(null);
   const [customPrompt, setCustomPrompt] = useState('');
+  const [activeEventSource, setActiveEventSource] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -82,6 +83,7 @@ export default function ReposPage() {
     }
 
     const eventSource = new EventSource(`/api/audit/stream?${params.toString()}`);
+    setActiveEventSource(eventSource);
 
     eventSource.addEventListener('progress', (e) => {
       const data = JSON.parse(e.data);
@@ -91,12 +93,14 @@ export default function ReposPage() {
     eventSource.addEventListener('complete', (e) => {
       const data = JSON.parse(e.data);
       eventSource.close();
+      setActiveEventSource(null);
       setAuditSuccess(`Audit complete! Score: ${data.scores?.overall}/100`);
       router.push(`/report/${data.auditId}`);
     });
 
     eventSource.addEventListener('error', (e) => {
       eventSource.close();
+      setActiveEventSource(null);
       let errorMsg = 'Audit failed. Please try again.';
       try {
         const data = JSON.parse(e.data);
@@ -106,6 +110,16 @@ export default function ReposPage() {
       setAuditingRepo(null);
       setAuditStep(null);
     });
+  }
+
+  function handleCancelAudit() {
+    if (activeEventSource) {
+      activeEventSource.close();
+      setActiveEventSource(null);
+    }
+    setAuditingRepo(null);
+    setAuditStep(null);
+    setAuditError("Audit halted by user.");
   }
 
   function getLastAudit(repo) {
@@ -246,7 +260,11 @@ export default function ReposPage() {
 
         {/* Loading Overlay for Active Audit */}
         {auditingRepo && (
-          <LoadingOverlay repoName={auditingRepo} currentStep={auditStep} />
+          <LoadingOverlay 
+            repoName={auditingRepo} 
+            currentStep={auditStep} 
+            onCancel={handleCancelAudit}
+          />
         )}
 
         {/* Detailed Audit Modal */}
