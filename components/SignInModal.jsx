@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { auth, googleProvider, githubProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../lib/firebase';
 import { updateProfile } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useFocusTrap } from '../lib/hooks';
 
 export default function SignInModal({ isOpen, onClose, defaultIsSignUp = false }) {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function SignInModal({ isOpen, onClose, defaultIsSignUp = false }
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(defaultIsSignUp);
+  const modalRef = useFocusTrap(isOpen);
   
   useEffect(() => {
     if (isOpen) {
@@ -87,14 +89,14 @@ export default function SignInModal({ isOpen, onClose, defaultIsSignUp = false }
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 9999
     }}>
-      <div className="glass modal-content" onClick={e => e.stopPropagation()} style={{
+      <div ref={modalRef} className="glass modal-content" onClick={e => e.stopPropagation()} style={{
         width: '100%', maxWidth: '400px', padding: '32px',
         border: '1px solid rgba(220, 38, 38, 0.3)',
         borderRadius: '16px', backgroundColor: 'rgba(10, 10, 10, 0.9)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h2 style={{ margin: 0, fontSize: '24px' }}>{isSignUp ? 'Create Account' : 'Sign In'}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '20px' }}>×</button>
+          <button onClick={onClose} aria-label="Close modal" style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '20px' }}>×</button>
         </div>
         
         {error && <div style={{ color: '#ef4444', marginBottom: '16px', textAlign: 'center', fontSize: '14px' }}>{error}</div>}

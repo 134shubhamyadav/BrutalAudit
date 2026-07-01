@@ -98,7 +98,7 @@
 
 .stat-num {
   font-size: 48px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-space-grotesk);
   font-weight: 700;
   color: var(--text-primary);
   text-shadow: 0 4px 20px rgba(0,0,0,0.5);

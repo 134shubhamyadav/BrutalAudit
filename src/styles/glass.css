@@ -49,19 +49,21 @@
               box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.hover-lift:hover {
-  transform: translateY(-4px);
-  border-color: var(--glass-border-hover);
-  box-shadow: var(--glass-highlight), 0 12px 40px rgba(0,0,0,0.4), 0 0 40px rgba(255,30,30,0.1);
-}
-
 .hover-glow {
   transition: all var(--duration-fast) var(--ease-out);
 }
 
-.hover-glow:hover {
-  border-color: rgba(255, 30, 30, 0.4);
-  background: rgba(255, 30, 30, 0.03);
+@media (hover: hover) {
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glass-highlight), 0 12px 40px rgba(0,0,0,0.4), 0 0 40px rgba(255,30,30,0.1);
+  }
+
+  .hover-glow:hover {
+    border-color: rgba(255, 30, 30, 0.4);
+    background: rgba(255, 30, 30, 0.03);
+  }
 }
 
 .premium-shadow {

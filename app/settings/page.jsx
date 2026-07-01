@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
+import Image from 'next/image';
 import { auth } from '../../lib/firebase';
 import { unlink, deleteUser, signOut } from 'firebase/auth';
 
@@ -91,8 +92,8 @@ export default function SettingsPage() {
             </h3>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <div className="profile-avatar premium-glow" style={{ width: '80px', height: '80px', overflow: 'hidden' }}>
-                <img src={user.photoURL || 'https://www.svgrepo.com/show/512317/github-142.svg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="profile-avatar premium-glow" style={{ width: '80px', height: '80px', margin: '0', position: 'relative' }}>
+                <Image src={user.photoURL || 'https://avatars.githubusercontent.com/u/9919?s=200&v=4'} alt="Avatar" fill style={{ objectFit: 'cover' }} sizes="80px" />
               </div>
               <div>
                 <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{user.displayName || 'Unknown Developer'}</div>

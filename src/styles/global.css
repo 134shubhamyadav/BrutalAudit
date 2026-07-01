@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   background-color: var(--bg-dark);
   color: var(--text-primary);
   overflow-x: hidden;
@@ -16,7 +16,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .brand, .logo {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-space-grotesk);
 }
 
 .page {
@@ -138,38 +138,22 @@ a:hover {
   .dashboard-layout {
     flex-direction: column !important;
   }
-  .sidebar {
-    width: 100% !important;
-    min-width: unset !important;
-    height: auto !important;
-    flex-direction: row !important;
-    padding: 12px 16px !important;
-    border-right: none !important;
-    border-bottom: 1px solid var(--glass-border) !important;
-  }
-  .sidebar-nav {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 4px;
-    flex: 1;
-    overflow-x: auto;
-  }
-  .nav-section { display: none !important; }
-  .nav-item {
-    flex-direction: column;
-    padding: 8px 12px !important;
-    font-size: 11px;
-    min-width: 60px;
-    text-align: center;
-  }
-  .sidebar-profile { display: none !important; }
-  .main-content { padding: 16px !important; }
+  .main-content { padding: 16px !important; margin-left: 0 !important; margin-top: 60px !important; }
   .overview-cards { grid-template-columns: 1fr 1fr !important; }
   .report-hero { flex-direction: column !important; }
   .dash-header { flex-direction: column !important; gap: 12px !important; align-items: flex-start !important; }
   .hero-title { font-size: 42px !important; }
   .pricing-grid { grid-template-columns: 1fr !important; }
   .features-grid { grid-template-columns: 1fr !important; }
+  
+  /* 44x44px touch targets for accessibility */
+  button, .btn-ghost, .btn-red, .filter-btn, .nav-item, .nav-link, a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {

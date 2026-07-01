@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { auth, githubProvider } from '../lib/firebase';
 import { linkWithPopup, updateProfile, updateEmail, GithubAuthProvider } from 'firebase/auth';
+import { useFocusTrap } from '../lib/hooks';
 
 export default function OnboardingModal() {
   const { user, loading } = useAuth();
@@ -16,6 +17,8 @@ export default function OnboardingModal() {
   
   const [isLinking, setIsLinking] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  const modalRef = useFocusTrap(true);
 
   useEffect(() => {
     if (user) {
@@ -98,7 +101,7 @@ export default function OnboardingModal() {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 10000 // Very high z-index to block everything
     }}>
-      <div className="glass modal-content anim-enter" style={{
+      <div ref={modalRef} className="glass modal-content anim-enter" style={{
         width: '100%', maxWidth: '450px', padding: '40px',
         border: '1px solid rgba(220, 38, 38, 0.4)',
         borderRadius: '16px', backgroundColor: 'rgba(10, 10, 10, 0.95)'

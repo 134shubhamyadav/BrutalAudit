@@ -7,7 +7,7 @@
   --text:#FFFFFF;--text2:#CFCFCF;--text3:#8F8F8F;
   --glow:0 0 30px rgba(255,30,30,0.3);--glow2:0 0 60px rgba(255,30,30,0.15);
 }
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+body{font-family:var(--font-space-grotesk);background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
 .page{display:none;min-height:100vh}
 .page.active{display:block}
 

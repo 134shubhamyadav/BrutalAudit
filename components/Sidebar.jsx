@@ -1,27 +1,51 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { auth, signOut } from '../lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { LayoutDashboard, FolderGit2, FileText, Settings, Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 const NAV_ITEMS = [
   { section: 'MAIN', items: [
-    { icon: '📊', label: 'Overview', href: '/dashboard', id: 'dashboard' },
-    { icon: '📁', label: 'Audits & Repos', href: '/repos', id: 'repos' },
-    { icon: '📋', label: 'Reports', href: '/reports', id: 'reports' },
-    { icon: '⚙️', label: 'Settings', href: '/settings', id: 'settings' },
+    { icon: <LayoutDashboard size={18} />, label: 'Overview', href: '/dashboard', id: 'dashboard' },
+    { icon: <FolderGit2 size={18} />, label: 'Audits & Repos', href: '/repos', id: 'repos' },
+    { icon: <FileText size={18} />, label: 'Reports', href: '/reports', id: 'reports' },
+    { icon: <Settings size={18} />, label: 'Settings', href: '/settings', id: 'settings' },
   ]},
 ];
 
 export default function Sidebar({ activeId, auditCount }) {
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close drawer on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
-    <aside className="sidebar glass-panel">
-      <div className="sidebar-logo" onClick={() => router.push(user ? '/dashboard' : '/')} style={{ cursor: 'pointer' }}>
-        <img src="/logo.png" alt="Logo" />
-        <span>BrutalAudit</span>
+    <>
+      <div className="mobile-header">
+        <div className="sidebar-logo" onClick={() => router.push(user ? '/dashboard' : '/')} style={{ cursor: 'pointer', padding: 0, border: 'none' }}>
+          <Image src="/logo.png" alt="Logo" width={28} height={28} />
+          <span style={{ fontSize: '18px' }}>BrutalAudit</span>
+        </div>
+        <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* Overlay for mobile */}
+      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)}></div>
+
+      <aside className={`sidebar glass-panel ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-logo desktop-only" onClick={() => router.push(user ? '/dashboard' : '/')} style={{ cursor: 'pointer' }}>
+          <Image src="/logo.png" alt="Logo" width={40} height={40} />
+          <span>BrutalAudit</span>
+        </div>
 
       <div className="sidebar-nav">
         {NAV_ITEMS.map((group) => (
@@ -61,8 +85,8 @@ export default function Sidebar({ activeId, auditCount }) {
       </div>
 
       <div className="sidebar-profile">
-        <div className="profile-avatar premium-glow" style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={user?.photoURL || 'https://www.svgrepo.com/show/512317/github-142.svg'} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div className="profile-avatar premium-glow" style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', width: 36, height: 36 }}>
+          <Image src={user?.photoURL || 'https://avatars.githubusercontent.com/u/9919?s=200&v=4'} alt="Avatar" fill style={{ objectFit: 'cover' }} sizes="36px" />
         </div>
         <div style={{ overflow: 'hidden', flex: 1 }}>
           <div className="profile-name" style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -70,13 +94,14 @@ export default function Sidebar({ activeId, auditCount }) {
           </div>
           <button 
             className="btn-ghost btn-sm" 
-            style={{ padding: '2px 6px', fontSize: '11px', marginTop: '4px' }}
+            style={{ padding: '2px 6px', fontSize: '11px', marginTop: '4px', minHeight: '44px' }}
             onClick={() => signOut(auth).then(() => router.push('/'))}
           >
             Sign Out
           </button>
         </div>
-      </div>
-    </aside>
+        </div>
+      </aside>
+    </>
   );
 }

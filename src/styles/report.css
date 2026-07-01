@@ -3,7 +3,7 @@
 .filters-row { display: flex; gap: 12px; margin-bottom: 24px; }
 .filter-btn {
   background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px;
-  padding: 8px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+  padding: 8px 16px; font-family: var(--font-space-grotesk); font-size: 14px;
   color: var(--text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease);
 }
 .filter-btn:hover, .filter-btn.active {
@@ -17,7 +17,7 @@
 .repo-meta { display: flex; gap: 20px; flex-wrap: wrap; }
 .repo-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
 .lang-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.score-pill { padding: 6px 16px; border-radius: 50px; font-size: 14px; font-weight: 700; border: 1px solid; font-family: 'Space Grotesk', sans-serif; }
+.score-pill { padding: 6px 16px; border-radius: 50px; font-size: 14px; font-weight: 700; border: 1px solid; font-family: var(--font-space-grotesk); }
 
 /* Report Header */
 .report-header { padding: 40px; margin-bottom: 32px; border-radius: 20px; }
@@ -36,7 +36,7 @@
 
 /* Audit Tabs & Panels */
 .audit-tabs { display: flex; border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; background: var(--glass-bg); }
-.audit-tab { flex: 1; padding: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease); }
+.audit-tab { flex: 1; padding: 16px; font-family: var(--font-space-grotesk); font-size: 14px; font-weight: 600; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease); }
 .audit-tab.active { background: rgba(255, 30, 30, 0.1); color: var(--text-primary); border-bottom: 2px solid var(--red-base); }
 .audit-tab:not(:last-child) { border-right: 1px solid var(--glass-border); }
 
