@@ -4,7 +4,7 @@ import { runAudit, runDetailedAudit } from '../../../../lib/groq.js';
 import { createAudit, updateAudit, supabase } from '../../../../lib/supabase.js';
 import { checkAuditLimit } from '../../../../lib/rateLimit.js';
 
-export const maxDuration = 300; // Vercel Pro: up to 300s
+export const maxDuration = 60; // Vercel Hobby: up to 60s
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
