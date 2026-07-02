@@ -60,6 +60,10 @@
   animation: pulse-glow 3s infinite;
 }
 
+button.premium-glow, .btn-red.premium-glow {
+  animation: none !important;
+}
+
 /* Badges */
 .badge-good { background: rgba(16, 185, 129, 0.1); color: var(--status-good); border: 1px solid rgba(16, 185, 129, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
 .badge-critical { background: rgba(239, 68, 68, 0.1); color: var(--status-critical); border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }

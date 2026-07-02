@@ -14,6 +14,10 @@ export default function OnboardingModal() {
   // Local state for profile form
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  
+  const [hasUsername, setHasUsername] = useState(true); // default true to avoid flicker
+  const [isCheckingUsername, setIsCheckingUsername] = useState(true);
   
   const [isLinking, setIsLinking] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -24,17 +28,33 @@ export default function OnboardingModal() {
     if (user) {
       if (!user.displayName && !name) setName('');
       if (!user.email && !email) setEmail('');
+      
+      user.getIdToken().then(token => 
+        fetch('/api/profile/username', { headers: { 'Authorization': `Bearer ${token}` } })
+      )
+        .then(res => res.json())
+        .then(data => {
+          if (data.profile && data.profile.username) {
+            setHasUsername(true);
+          } else {
+            setHasUsername(false);
+          }
+          setIsCheckingUsername(false);
+        })
+        .catch(() => {
+          setIsCheckingUsername(false);
+        });
     }
   }, [user]);
 
-  if (loading || !user) return null;
+  if (loading || !user || isCheckingUsername) return null;
 
   // Determine what is missing
   const hasGithub = user.providerData.some(p => p.providerId === 'github.com');
   const hasName = !!user.displayName;
   const hasEmail = !!user.email;
 
-  if (hasGithub && hasName && hasEmail) {
+  if (hasGithub && hasName && hasEmail && hasUsername) {
     return null; // Onboarding complete!
   }
 
@@ -74,6 +94,23 @@ export default function OnboardingModal() {
       if (!hasEmail && email.trim()) {
         promises.push(updateEmail(user, email.trim()));
       }
+      if (!hasUsername && username.trim()) {
+        const token = await user.getIdToken();
+        promises.push(
+          fetch('/api/profile/username', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ username: username.trim() })
+          }).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Username error');
+            return data;
+          })
+        );
+      }
       
       await Promise.all(promises);
       setSuccess('Profile updated successfully!');
@@ -81,13 +118,11 @@ export default function OnboardingModal() {
       
       // Reload user to ensure state is fresh
       await user.reload();
-      // A trick to trigger re-render in useAuth if reload doesn't trigger onIdTokenChanged immediately
       window.dispatchEvent(new Event('firebase-auth-refresh'));
       window.location.reload(); // Simple brute force to get fresh UI
     } catch (err) {
       console.error("Error updating profile:", err);
-      if (err.code === 'auth/email-already-in-use') setError('Email already in use.');
-      else setError('Failed to update profile. Please try again.');
+      setError(err.message || 'Failed to update profile. Please try again.');
     } finally {
       setIsUpdating(false);
     }
@@ -99,7 +134,7 @@ export default function OnboardingModal() {
       backgroundColor: 'rgba(0, 0, 0, 0.85)', 
       backdropFilter: 'blur(12px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 10000 // Very high z-index to block everything
+      zIndex: 10000
     }}>
       <div ref={modalRef} className="glass modal-content anim-enter" style={{
         width: '100%', maxWidth: '450px', padding: '40px',
@@ -139,7 +174,7 @@ export default function OnboardingModal() {
           )}
 
           {/* STEP 2: Profile Details */}
-          {hasGithub && (!hasName || !hasEmail) && (
+          {hasGithub && (!hasName || !hasEmail || !hasUsername) && (
             <div className="glass anim-enter" style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                 <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--red-base)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>2</div>
@@ -169,6 +204,19 @@ export default function OnboardingModal() {
                     style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #333', background: '#111', color: '#fff' }}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                )}
+                {!hasUsername && (
+                  <input 
+                    type="text" 
+                    placeholder="Leaderboard Username (e.g. hackerman99)"
+                    className="premium-input"
+                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #333', background: '#111', color: '#fff' }}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    pattern="^[a-zA-Z0-9_.]{1,30}$"
+                    title="Up to 30 characters. Letters, numbers, underscores, and periods only."
                     required
                   />
                 )}

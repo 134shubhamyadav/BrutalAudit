@@ -8,6 +8,8 @@
   
   --primary-base: #3B82F6;
   --red-base: #EF4444;
+  --red-deep: #B91C1C;
+  --red-bright: #F87171;
   --red-glow: rgba(239, 68, 68, 0.4);
   
   --text-primary: #FAFAFA;
@@ -30,6 +32,7 @@
   --status-good: #22C55E;
   
   /* Transitions & Animation System */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);

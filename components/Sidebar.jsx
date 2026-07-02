@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { auth, signOut } from '../lib/firebase';
 import { useRouter, usePathname } from 'next/navigation';
-import { LayoutDashboard, FolderGit2, FileText, Settings, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FolderGit2, FileText, Settings, Menu, X, Trophy } from 'lucide-react';
 import Image from 'next/image';
 
 const NAV_ITEMS = [
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
     { icon: <LayoutDashboard size={18} />, label: 'Overview', href: '/dashboard', id: 'dashboard' },
     { icon: <FolderGit2 size={18} />, label: 'Audits & Repos', href: '/repos', id: 'repos' },
     { icon: <FileText size={18} />, label: 'Reports', href: '/reports', id: 'reports' },
+    { icon: <Trophy size={18} />, label: 'Leaderboard', href: '/leaderboard', id: 'leaderboard' },
     { icon: <Settings size={18} />, label: 'Settings', href: '/settings', id: 'settings' },
   ]},
 ];
@@ -85,7 +86,7 @@ export default function Sidebar({ activeId, auditCount }) {
       </div>
 
       <div className="sidebar-profile">
-        <div className="profile-avatar premium-glow" style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', width: 36, height: 36 }}>
+        <div className="profile-avatar" style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', width: 36, height: 36 }}>
           <Image src={user?.photoURL || 'https://avatars.githubusercontent.com/u/9919?s=200&v=4'} alt="Avatar" fill style={{ objectFit: 'cover' }} sizes="36px" />
         </div>
         <div style={{ overflow: 'hidden', flex: 1 }}>

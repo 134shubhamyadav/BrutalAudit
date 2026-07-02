@@ -113,4 +113,5 @@
 
 .stat-red {
   color: var(--red-base);
+  font-size: 32px;
 }

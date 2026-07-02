@@ -72,3 +72,27 @@ CREATE TABLE IF NOT EXISTS public.audit_cache (
 CREATE INDEX IF NOT EXISTS idx_audit_cache_lookup ON public.audit_cache (repo_full_name, commit_sha, is_detailed);
 
 ALTER TABLE public.audit_cache DISABLE ROW LEVEL SECURITY;
+
+-- ── Subscriptions ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.subscriptions (
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id                 TEXT NOT NULL UNIQUE,
+  stripe_customer_id      TEXT,
+  stripe_subscription_id  TEXT,
+  plan_tier               TEXT NOT NULL DEFAULT 'free',
+  status                  TEXT NOT NULL DEFAULT 'active',
+  created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.subscriptions DISABLE ROW LEVEL SECURITY;
+
+-- ── Profiles ──────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.profiles (
+  user_id               TEXT PRIMARY KEY,
+  username              TEXT UNIQUE NOT NULL,
+  last_username_change  TIMESTAMPTZ,
+  created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.profiles DISABLE ROW LEVEL SECURITY;

@@ -18,9 +18,35 @@ export default function Home() {
   const isSignedIn = !!user;
   const router = useRouter();
   const initialized = useRef(false);
-  const [stats, setStats] = useState({ totalAudits: 0, avgScore: 85, loaded: false });
+  const [stats, setStats] = useState({ totalAudits: 0, avgScore: 85, avgTime: 3.2, loaded: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignUpModal, setIsSignUpModal] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
+
+  const handleCheckout = async (priceId, planTier) => {
+    if (!priceId || priceId.includes('mock')) {
+      alert('Stripe is not fully configured yet! Please add NEXT_PUBLIC_STRIPE_PRO_PRICE_ID to .env.local');
+      return;
+    }
+    setLoadingCheckout(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, planTier })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Checkout failed');
+        setLoadingCheckout(false);
+      }
+    } catch (err) {
+      alert('Checkout error');
+      setLoadingCheckout(false);
+    }
+  };
 
   const openSignIn = () => {
     setIsSignUpModal(false);
@@ -35,9 +61,14 @@ export default function Home() {
   useEffect(() => {
     api.stats.public()
       .then(data => {
-        setStats({ totalAudits: data.totalAudits + 120, avgScore: data.avgScore || 85, loaded: true });
+        setStats({ 
+          totalAudits: data.totalAudits, 
+          avgScore: data.avgScore || 85, 
+          avgTime: data.avgTime || 3.2,
+          loaded: true 
+        });
       })
-      .catch(() => setStats({ totalAudits: 120, avgScore: 85, loaded: true }));
+      .catch(() => setStats({ totalAudits: 0, avgScore: 85, avgTime: 3.2, loaded: true }));
   }, []);
 
   useEffect(() => {
@@ -131,7 +162,7 @@ export default function Home() {
             <div className="stat-label">Avg Code Grade</div>
           </MagneticCard>
           <MagneticCard className="glass stat-card hover-lift" style={{ '--i': 3 }}>
-            <div className="stat-num">{stats.loaded ? '3.2' : '...'}<span className="stat-red">s</span></div>
+            <div className="stat-num">{stats.loaded ? stats.avgTime : '...'}<span className="stat-red">s</span></div>
             <div className="stat-label">Avg Audit Time</div>
           </MagneticCard>
         </div>
@@ -209,7 +240,7 @@ export default function Home() {
         <div className="pricing-grid stagger-group">
           <div className="glass price-card hover-glow">
             <div className="price-tier">Starter</div>
-            <div className="price-amount">$0</div>
+            <div className="price-amount">₹0</div>
             <div className="price-period">Forever free</div>
             <div className="price-divider"></div>
             <div className="price-feature"><Check size={16} className="text-green" /> 3 repos / month</div>
@@ -225,11 +256,11 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className="glass price-card featured premium-glow hover-glow">
+          <div className="glass price-card featured card-pulse hover-glow">
             <div className="price-badge">MOST POPULAR</div>
             <div className="price-tier">Pro</div>
-            <div className="price-amount">$29<span style={{ fontSize: '20px', color: 'var(--text3)' }}>/mo</span></div>
-            <div className="price-period">Per workspace</div>
+            <div className="price-amount">₹199<span style={{ fontSize: '20px', color: 'var(--text3)' }}>/mo</span></div>
+            <div className="price-period">Perfect for students</div>
             <div className="price-divider"></div>
             <div className="price-feature"><Check size={16} className="text-green" /> Unlimited repos</div>
             <div className="price-feature"><Check size={16} className="text-green" /> Full audit report</div>
@@ -240,21 +271,31 @@ export default function Home() {
               {!isSignedIn ? (
                 <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Start Pro Trial</button>
               ) : (
-                <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={() => router.push('/dashboard')}>Start Pro Trial</button>
+                <button className="btn-red ripple-btn" style={{ width: '100%' }} disabled={loadingCheckout} onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_pro_mock', 'pro')}>
+                  {loadingCheckout ? 'Loading...' : 'Start Pro Trial'}
+                </button>
               )}
             </div>
           </div>
           <div className="glass price-card hover-glow">
-            <div className="price-tier">Enterprise</div>
-            <div className="price-amount">Custom</div>
-            <div className="price-period">Contact us</div>
+            <div className="price-tier">Elite</div>
+            <div className="price-amount">₹499<span style={{ fontSize: '20px', color: 'var(--text3)' }}>/mo</span></div>
+            <div className="price-period">For heavy contributors</div>
             <div className="price-divider"></div>
             <div className="price-feature"><Check size={16} className="text-green" /> Everything in Pro</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> SSO / SAML</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> On-premise option</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> SLA guarantee</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> Dedicated CSM</div>
-            <div style={{ marginTop: '24px' }}><button className="btn-ghost ripple-btn" style={{ width: '100%' }}>Talk to Sales</button></div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Unlimited AI fixes</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> API access</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> Custom CI/CD hooks</div>
+            <div className="price-feature"><Check size={16} className="text-green" /> 24/7 Priority support</div>
+            <div style={{ marginTop: '24px' }}>
+              {!isSignedIn ? (
+                <button className="btn-ghost ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Get Elite</button>
+              ) : (
+                <button className="btn-ghost ripple-btn" style={{ width: '100%' }} disabled={loadingCheckout} onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_ELITE_PRICE_ID || 'price_elite_mock', 'elite')}>
+                  {loadingCheckout ? 'Loading...' : 'Get Elite'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </section>

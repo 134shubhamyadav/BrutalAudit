@@ -40,7 +40,7 @@ export async function POST(request) {
     const { allowed, remaining } = await checkAuditLimit(userId);
     if (!allowed) {
       return Response.json(
-        { error: 'Audit limit reached. You can run 5 audits per hour.' },
+        { error: 'Audit limit reached. You can run 3 audits per month on the Free plan. Upgrade to Pro for unlimited audits.' },
         { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
       );
     }

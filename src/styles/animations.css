@@ -25,6 +25,14 @@
   50% { opacity: 0.5; transform: scale(1.05); }
 }
 
+@keyframes card-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(255,30,30,0.1); transform: translateY(0); }
+  50% { box-shadow: 0 0 30px rgba(255,30,30,0.3); transform: translateY(-4px); }
+}
+.card-pulse {
+  animation: card-pulse 3s infinite ease-in-out;
+}
+
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
