@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const { count, error } = await supabase
       .from('audits')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('status', 'done');
 
     if (error) throw error;
@@ -19,23 +19,19 @@ export async function GET() {
       
     let avgScore = 85;
     let avgTime = 3.2;
+
     if (recent && recent.length > 0) {
       const sum = recent.reduce((acc, row) => acc + (row.scores?.overall || 0), 0);
       avgScore = Math.round(sum / recent.length);
       
-      let validTimes = 0;
-      let totalTime = 0;
-      recent.forEach(row => {
-        if (row.created_at && row.completed_at) {
-          const t = new Date(row.completed_at).getTime() - new Date(row.created_at).getTime();
-          if (t > 0 && t < 300000) {
-            totalTime += t;
-            validTimes++;
-          }
-        }
-      });
-      if (validTimes > 0) {
-        avgTime = (totalTime / validTimes / 1000).toFixed(1);
+      const validTimes = recent
+        .filter(row => row.created_at && row.completed_at)
+        .map(row => new Date(row.completed_at).getTime() - new Date(row.created_at).getTime())
+        .filter(t => t > 0 && t < 300000);
+        
+      if (validTimes.length > 0) {
+        const totalTime = validTimes.reduce((acc, t) => acc + t, 0);
+        avgTime = (totalTime / validTimes.length / 1000).toFixed(1);
       }
     }
 

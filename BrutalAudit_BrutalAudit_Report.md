@@ -1,24 +1,24 @@
 # BrutalAudit Report: BrutalAudit
 
-## Overall Score: 57/100
+## Overall Score: 58/100
 - Security: 60/100
 - Architecture: 58/100
-- Performance: 75/100
+- Performance: 80/100
 
 ## Summary
-134shubhamyadav/BrutalAudit received an overall grade of D (57/100). 1 critical issue requires immediate attention. Security requires significant improvement. Architecture scored 58/100 and performance scored 75/100.
+134shubhamyadav/BrutalAudit received an overall grade of D (58/100). 1 critical issue requires immediate attention. Security requires significant improvement. Architecture scored 58/100 and performance scored 80/100.
 
 ## Findings
 
-### [HIGH] Insecure Direct Object Reference (IDOR) in Audit Report Endpoint
+### [HIGH] Missing Input Validation in API Endpoints
 **Category:** security
-**File:** `app/api/report/[id]/route.js` (Line 17)
+**File:** `app/api/repos/route.js` (Line 35)
 
-The code in app/api/report/[id]/route.js (line 17) does not properly validate the audit ID, allowing an attacker to access reports belonging to other users.
+The code does not validate user input in API endpoints, which can lead to security vulnerabilities. For example, in app/api/repos/route.js (line 35-40), the 'githubToken' parameter is not validated.
 
 **Recommendation:**
 ```
-Implement proper validation and authorization checks to prevent IDOR attacks.
+Add input validation to ensure that user input conforms to expected formats and ranges.
 ```
 
 ---
@@ -88,28 +88,28 @@ Remove self-import reference and decouple module lifecycle.
 
 ---
 
-### [MEDIUM] Inefficient Database Queries in Stats Endpoint
+### [MEDIUM] Inefficient Database Queries
 **Category:** performance
 **File:** `app/api/stats/route.js` (Line 5)
 
-The code in app/api/stats/route.js (line 5) fetches all audits and then calculates the average score. This could lead to performance issues with a large number of audits.
+The code uses inefficient database queries, such as selecting all columns (*) instead of specific columns. For example, in app/api/stats/route.js (line 5-10), the query selects all columns from the 'audits' table.
 
 **Recommendation:**
 ```
-Use a more efficient database query that calculates the average score directly, such as using the AVG() function.
+Optimize database queries by selecting only the necessary columns and using efficient filtering and sorting methods.
 ```
 
 ---
 
-### [MEDIUM] Tight Coupling in Audit Stream Endpoint
+### [MEDIUM] Tight Coupling between Components
 **Category:** architecture
 **File:** `app/api/audit/stream/route.js` (Line 10)
 
-The code in app/api/audit/stream/route.js (line 10) has a tight coupling between the audit stream logic and the Supabase database. This makes it difficult to switch to a different database or modify the audit stream logic.
+The code has tight coupling between components, which can make it difficult to maintain and modify. For example, in app/api/audit/stream/route.js (line 10-20), the component is tightly coupled with the 'supabase' and 'github' libraries.
 
 **Recommendation:**
 ```
-Introduce an abstraction layer between the audit stream logic and the database to reduce coupling.
+Use dependency injection or other decoupling techniques to reduce the coupling between components.
 ```
 
 ---
@@ -233,6 +233,19 @@ Remove import of 'defaultBranch' to clean up bundle size.
 
 ### [LOW] Unused / Dead Import Declaration
 **Category:** code_smell
+**File:** `app/api/leaderboard/route.js` (Line 14)
+
+Imported module/variable 'valid' is never referenced in app/api/leaderboard/route.js.
+
+**Recommendation:**
+```
+Remove import of 'valid' to clean up bundle size.
+```
+
+---
+
+### [LOW] Unused / Dead Import Declaration
+**Category:** code_smell
 **File:** `app/api/reports/route.js` (Line 4)
 
 Imported module/variable 'dynamic' is never referenced in app/api/reports/route.js.
@@ -259,6 +272,19 @@ Remove import of 'githubUser' to clean up bundle size.
 
 ### [LOW] High Cognitive Complexity / Deep Nesting
 **Category:** performance
+**File:** `app/api/stats/route.js` (Line 31)
+
+Deeply nested block in app/api/stats/route.js at line 31. Consider refactoring into smaller, decoupled helper functions.
+
+**Recommendation:**
+```
+Extract nested logic into a utility method.
+```
+
+---
+
+### [LOW] High Cognitive Complexity / Deep Nesting
+**Category:** performance
 **File:** `app/api/audit/stream/route.js` (Line 77)
 
 Deeply nested block in app/api/audit/stream/route.js at line 77. Consider refactoring into smaller, decoupled helper functions.
@@ -279,6 +305,45 @@ Imported module/variable 'maxDuration' is never referenced in app/api/audit/stre
 **Recommendation:**
 ```
 Remove import of 'maxDuration' to clean up bundle size.
+```
+
+---
+
+### [LOW] Unused / Dead Import Declaration
+**Category:** code_smell
+**File:** `app/api/profile/username/route.js` (Line 59)
+
+Imported module/variable 'lastChange' is never referenced in app/api/profile/username/route.js.
+
+**Recommendation:**
+```
+Remove import of 'lastChange' to clean up bundle size.
+```
+
+---
+
+### [LOW] Unused / Dead Import Declaration
+**Category:** code_smell
+**File:** `app/api/stripe/checkout/route.js` (Line 6)
+
+Imported module/variable 'stripe' is never referenced in app/api/stripe/checkout/route.js.
+
+**Recommendation:**
+```
+Remove import of 'stripe' to clean up bundle size.
+```
+
+---
+
+### [LOW] Unused / Dead Import Declaration
+**Category:** code_smell
+**File:** `app/api/stripe/portal/route.js` (Line 5)
+
+Imported module/variable 'stripe' is never referenced in app/api/stripe/portal/route.js.
+
+**Recommendation:**
+```
+Remove import of 'stripe' to clean up bundle size.
 ```
 
 ---
@@ -389,7 +454,7 @@ Remove import of 'activeIndex' to clean up bundle size.
 
 ### [LOW] Unused / Dead Import Declaration
 **Category:** code_smell
-**File:** `components/OnboardingModal.jsx` (Line 45)
+**File:** `components/OnboardingModal.jsx` (Line 65)
 
 Imported module/variable 'result' is never referenced in components/OnboardingModal.jsx.
 
@@ -480,13 +545,13 @@ Remove import of 'RepoCard' to clean up bundle size.
 
 ### [LOW] Unused / Dead Import Declaration
 **Category:** code_smell
-**File:** `app/settings/page.jsx` (Line 52)
+**File:** `app/settings/page.jsx` (Line 51)
 
-Imported module/variable 'handleDeleteAccount' is never referenced in app/settings/page.jsx.
+Imported module/variable 'hasGithub' is never referenced in app/settings/page.jsx.
 
 **Recommendation:**
 ```
-Remove import of 'handleDeleteAccount' to clean up bundle size.
+Remove import of 'hasGithub' to clean up bundle size.
 ```
 
 ---
@@ -558,19 +623,6 @@ Move configurations and fixtures to a mock server or dynamic API response.
 
 ### [LOW] AI Slop: Placeholder / Mock Data Signatures
 **Category:** code_smell
-**File:** `components/OnboardingModal.jsx` (Line 156)
-
-Hardcoded arrays or mock objects (e.g. mockUsers, dummyProducts) that indicate tutorial-grade architecture or incomplete logic layers. Found in components/OnboardingModal.jsx at line 156: "placeholder="Full Name""
-
-**Recommendation:**
-```
-Move configurations and fixtures to a mock server or dynamic API response.
-```
-
----
-
-### [LOW] AI Slop: Placeholder / Mock Data Signatures
-**Category:** code_smell
 **File:** `components/SignInModal.jsx` (Line 108)
 
 Hardcoded arrays or mock objects (e.g. mockUsers, dummyProducts) that indicate tutorial-grade architecture or incomplete logic layers. Found in components/SignInModal.jsx at line 108: "placeholder="Full Name""
@@ -595,28 +647,15 @@ Move configurations and fixtures to a mock server or dynamic API response.
 
 ---
 
-### [CRITICAL] Potential SQL Injection in Supabase Queries
-**Category:** security
-**File:** `app/api/reports/route.js` (Line 13)
-
-The code uses string concatenation to build queries in app/api/reports/route.js (line 13) and app/api/audit/stream/route.js (line 69). This could lead to SQL injection attacks if user input is not properly sanitized.
-
-**Recommendation:**
-```
-Use parameterized queries or the Supabase query builder to prevent SQL injection.
-```
-
----
-
-### [LOW] Magic Numbers in Rate Limiting
+### [LOW] AI Slop: Placeholder / Mock Data Signatures
 **Category:** code_smell
-**File:** `app/api/repos/route.js` (Line 8)
+**File:** `app/settings/page.jsx` (Line 198)
 
-The code in app/api/repos/route.js (line 8) and app/api/badge/[owner]/[repo]/route.js (line 4) uses magic numbers for rate limiting. This makes it difficult to understand the purpose of these numbers.
+Hardcoded arrays or mock objects (e.g. mockUsers, dummyProducts) that indicate tutorial-grade architecture or incomplete logic layers. Found in app/settings/page.jsx at line 198: "placeholder="Enter username""
 
 **Recommendation:**
 ```
-Replace magic numbers with named constants to improve code readability.
+Move configurations and fixtures to a mock server or dynamic API response.
 ```
 
 ---

@@ -1,6 +1,5 @@
 import { getAuth } from '../../../lib/auth-server.js';
 import { getUserRepos } from '../../../lib/github.js';
-import { adminAuth } from '../../../lib/firebase-admin.js';
 
 // Rate limit store (in-memory for MVP; use Redis/Upstash in production)
 const rateLimitStore = new Map();
@@ -35,6 +34,14 @@ export async function GET(request) {
     // Get GitHub token or UID from request headers
     const githubUid = request.headers.get('x-github-uid');
     const githubToken = request.headers.get('x-github-token');
+
+    if (githubToken && !/^[a-zA-Z0-9_.-]+$/.test(githubToken)) {
+      return Response.json({ error: 'Invalid GitHub token format' }, { status: 400 });
+    }
+
+    if (githubUid && !/^\d+$/.test(githubUid)) {
+      return Response.json({ error: 'Invalid GitHub UID format' }, { status: 400 });
+    }
     
     if (!githubUid && !githubToken) {
       return Response.json({ repos: [], authenticated: false });
