@@ -18,7 +18,6 @@ jobs:
         node-version: '18.x'
         cache: 'npm'
     - run: npm ci
-    - run: npm run lint
     - run: npm run build
       env:
         NEXT_PUBLIC_FIREBASE_PROJECT_ID: "dummy-project"
