@@ -43,7 +43,6 @@ export default function SignInModal({ isOpen, onClose, defaultIsSignUp = false }
       }
       
       onClose();
-      router.push('/dashboard');
     } catch (err) {
       console.error(err);
       setError('Failed to sign in. Please try again.');
@@ -71,7 +70,6 @@ export default function SignInModal({ isOpen, onClose, defaultIsSignUp = false }
         await signInWithEmailAndPassword(auth, email, password);
       }
       onClose();
-      router.push('/dashboard');
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/email-already-in-use') setError('Email is already in use.');

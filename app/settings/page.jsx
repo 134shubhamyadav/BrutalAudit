@@ -7,6 +7,7 @@ import Sidebar from '../../components/Sidebar';
 import Image from 'next/image';
 import { auth } from '../../lib/firebase';
 import { unlink, deleteUser, signOut } from 'firebase/auth';
+import { toast } from '../../components/Toast';
 
 export default function SettingsPage() {
   const { user, loading } = useAuth();
@@ -83,12 +84,15 @@ export default function SettingsPage() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.error && data.error.includes('No billing account found')) {
+        toast.info('Billing is currently paused. You are on the promotional Free Pro plan until Aug 15, 2026!');
+        setLoadingBilling(false);
       } else {
-        alert(data.error || 'Failed to open billing portal');
+        toast.error(data.error || 'Failed to open billing portal');
         setLoadingBilling(false);
       }
     } catch (err) {
-      alert('Error opening billing portal');
+      toast.error('Error opening billing portal');
       setLoadingBilling(false);
     }
   };
@@ -167,7 +171,7 @@ export default function SettingsPage() {
         {error && <div style={{ color: '#ef4444', marginBottom: '24px', padding: '16px', background: 'rgba(239,68,68,0.1)', borderRadius: '12px', border: '1px solid rgba(239,68,68,0.3)' }}>{error}</div>}
         {success && <div style={{ color: '#10B981', marginBottom: '24px', padding: '16px', background: 'rgba(16,185,129,0.1)', borderRadius: '12px', border: '1px solid rgba(16,185,129,0.3)' }}>✓ {success}</div>}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '32px', maxWidth: '1400px', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', maxWidth: '1400px', width: '100%' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
           {/* Profile Details */}
@@ -284,44 +288,6 @@ export default function SettingsPage() {
 
             </div>
           </div>
-
-          {/* Billing & Subscription */}
-          <div className="glass dash-widget" style={{ padding: '32px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              💳 Billing & Subscription
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px', lineHeight: '1.6' }}>
-              Manage your active subscription plan, payment methods, and billing history through our secure Stripe portal.
-            </p>
-            
-            <button 
-              className="btn-ghost ripple-btn" 
-              onClick={handleManageBilling}
-              disabled={loadingBilling}
-              style={{ padding: '10px 20px', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
-            >
-              {loadingBilling ? 'Redirecting...' : 'Manage Subscription'}
-            </button>
-          </div>
-
-          {/* Danger Zone */}
-          <div className="glass dash-widget" style={{ padding: '32px', border: '1px solid rgba(239,68,68,0.3)', background: 'linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(239,68,68,0.05) 100%)' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              ⚠️ Danger Zone
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px', lineHeight: '1.6' }}>
-              Deleting your account is permanent. All your data, profile information, and authentication links will be permanently wiped from our Firebase servers immediately. Your previous audit records in Supabase will become orphaned.
-            </p>
-            
-            <button 
-              className="btn-red premium-glow ripple-btn" 
-              onClick={handleDeleteAccount}
-              disabled={isDeleting}
-              style={{ width: '100%', maxWidth: '300px', padding: '14px' }}
-            >
-              {isDeleting ? 'Deleting...' : 'Permanently Delete Account'}
-            </button>
-          </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -379,6 +345,46 @@ export default function SettingsPage() {
           </div>
 
         </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '1400px', width: '100%', marginTop: '32px' }}>
+          {/* Billing & Subscription */}
+          <div className="glass dash-widget" style={{ padding: '32px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              💳 Billing & Subscription
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px', lineHeight: '1.6', maxWidth: '800px' }}>
+              Manage your active subscription plan, payment methods, and billing history through our secure Stripe portal.
+            </p>
+            
+            <button 
+              className="btn-ghost ripple-btn" 
+              onClick={() => router.push('/billing')}
+              style={{ padding: '10px 20px', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+            >
+              Manage Subscription
+            </button>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="glass dash-widget" style={{ padding: '32px', border: '1px solid rgba(239,68,68,0.3)', background: 'linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(239,68,68,0.05) 100%)' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              ⚠️ Danger Zone
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px', lineHeight: '1.6', maxWidth: '800px' }}>
+              Deleting your account is permanent. All your data, profile information, and authentication links will be permanently wiped from our Firebase servers immediately. Your previous audit records in Supabase will become orphaned.
+            </p>
+            
+            <button 
+              className="btn-red premium-glow ripple-btn" 
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              style={{ width: '100%', maxWidth: '300px', padding: '14px' }}
+            >
+              {isDeleting ? 'Deleting...' : 'Permanently Delete Account'}
+            </button>
+          </div>
+        </div>
+
       </main>
     </div>
   );

@@ -173,8 +173,8 @@ export default function ReposPage() {
               }}
             />
           </div>
-          <button className="btn-red premium-glow ripple-btn" onClick={fetchData}>
-            ↻ Refresh
+          <button className="btn-red premium-glow ripple-btn" onClick={fetchData} disabled={loading}>
+            {loading ? '↻ Refreshing...' : '↻ Refresh'}
           </button>
         </div>
 
@@ -284,9 +284,13 @@ export default function ReposPage() {
                 onChange={(e) => setCustomPrompt(e.target.value)}
               />
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <button className="btn-ghost ripple-btn" onClick={() => setDetailedAuditModalRepo(null)}>Cancel</button>
-                <button className="btn-red premium-glow ripple-btn" onClick={() => handleAudit(detailedAuditModalRepo, true, customPrompt)}>
-                  Run Detailed Audit
+                <button className="btn-ghost ripple-btn" onClick={() => setDetailedAuditModalRepo(null)} disabled={auditingRepo === detailedAuditModalRepo.fullName}>Cancel</button>
+                <button 
+                  className="btn-red premium-glow ripple-btn" 
+                  onClick={() => handleAudit(detailedAuditModalRepo, true, customPrompt)}
+                  disabled={auditingRepo === detailedAuditModalRepo.fullName}
+                >
+                  {auditingRepo === detailedAuditModalRepo.fullName ? 'Starting...' : 'Run Detailed Audit'}
                 </button>
               </div>
             </div>

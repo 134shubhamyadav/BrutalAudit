@@ -6,16 +6,19 @@ import IssueCard from '../../../components/IssueCard.jsx';
 import ScoreRing from '../../../components/ScoreRing.jsx';
 import { IssueCardSkeleton } from '../../../components/SkeletonCard.jsx';
 import EmptyState, { ErrorState } from '../../../components/EmptyState.jsx';
-import { ScoreRadarChart } from '../../../components/Charts.jsx';
-import { ShieldAlert, FileCode, Zap, Bug, Bot } from 'lucide-react';
+import { ScoreRadarChart, HistoryLineChart } from '../../../components/Charts.jsx';
+import { ShieldAlert, FileCode, Zap, Bug, Bot, TrendingUp, TestTube, BookOpen } from 'lucide-react';
 import { api } from '../../../lib/api.js';
 
 const TAB_TYPES = {
-  security:     { label: 'Security',     icon: <ShieldAlert size={16} />, type: 'security' },
-  architecture: { label: 'Architecture', icon: <FileCode size={16} />, type: 'architecture' },
-  performance:  { label: 'Performance',  icon: <Zap size={16} />, type: 'performance' },
-  code_smell:   { label: 'Code Quality', icon: <Bug size={16} />, type: 'code_smell' },
-  'ai-fixes':   { label: 'AI Fixes ✨',  icon: <Bot size={16} />, type: null },
+  security:      { label: 'Security',      icon: <ShieldAlert size={16} />, type: 'security' },
+  architecture:  { label: 'Architecture',  icon: <FileCode size={16} />, type: 'architecture' },
+  performance:   { label: 'Performance',   icon: <Zap size={16} />, type: 'performance' },
+  test_coverage: { label: 'Test Coverage', icon: <TestTube size={16} />, type: 'test_coverage' },
+  documentation: { label: 'Documentation', icon: <BookOpen size={16} />, type: 'documentation' },
+  code_smell:    { label: 'Code Quality',  icon: <Bug size={16} />, type: 'code_smell' },
+  'ai-fixes':    { label: 'AI Fixes ✨',   icon: <Bot size={16} />, type: null },
+  history:       { label: 'History 📈',    icon: <TrendingUp size={16} />, type: null },
 };
 
 function timeAgo(dateStr) {
@@ -38,6 +41,7 @@ export default function ReportPage({ params }) {
   const [copied, setCopied] = useState(false);
   const [badgeCopied, setBadgeCopied] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [auditHistory, setAuditHistory] = useState([]);
 
   // Unwrap params (Next.js 15 async params)
   const [auditId, setAuditId] = useState(null);
@@ -58,8 +62,16 @@ export default function ReportPage({ params }) {
       const data = await api.audits.get(auditId);
       setAudit(data);
 
+      if (data.repo_full_name) {
+        fetch(`/api/repos/history?repo=${data.repo_full_name}`)
+          .then(r => r.json())
+          .then(res => {
+            if (res.history) setAuditHistory(res.history);
+          });
+      }
+
       // Set active tab to first tab with findings
-      const tabs = ['security', 'architecture', 'performance'];
+      const tabs = ['security', 'architecture', 'performance', 'test_coverage', 'documentation'];
       for (const tab of tabs) {
         if ((data.findings || []).some((f) => f.type === tab)) {
           setActiveTab(tab);
@@ -303,6 +315,18 @@ export default function ReportPage({ params }) {
                 <button className="btn-ghost btn-sm ripple-btn" onClick={downloadMarkdown}>
                   📥 Download (.md)
                 </button>
+                <button className="btn-ghost btn-sm ripple-btn" onClick={() => window.print()}>
+                  📥 Download (.pdf)
+                </button>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`BrutalAudit just destroyed my codebase. I scored a ${scores.overall || 0}/100. Roast my code:\n`)}&url=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost btn-sm ripple-btn"
+                  style={{ color: '#1DA1F2', borderColor: 'rgba(29, 161, 242, 0.3)' }}
+                >
+                  𝕏 Share
+                </a>
                 <a
                   href={meta.url || `https://github.com/${audit.repo_full_name}`}
                   target="_blank"
@@ -338,6 +362,15 @@ export default function ReportPage({ params }) {
           <div key={activeTab} className="audit-panel active anim-enter">
             <div className="issues-list">
               {(() => {
+                if (activeTab === 'history') {
+                  return (
+                    <div className="glass" style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: 'var(--text-primary)' }}>Score Trend</h3>
+                      <HistoryLineChart history={auditHistory} />
+                    </div>
+                  );
+                }
+
                 const findings = getTabFindings(activeTab);
 
                 if (findings.length === 0) {

@@ -11,7 +11,9 @@ import { Shield, Network, Zap, TestTube, BookOpen, Cpu, Check, X } from 'lucide-
 import { api } from '../lib/api.js';
 import { useAuth } from '../components/AuthProvider';
 import SignInModal from '../components/SignInModal';
+import CountdownBanner from '../components/CountdownBanner';
 import { auth, signOut } from '../lib/firebase';
+import { toast } from '../components/Toast';
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -22,10 +24,61 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
+  
+  const [liveReviews, setLiveReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/reviews?type=live')
+      .then(r => r.json())
+      .then(data => {
+        if (data.reviews) setLiveReviews(data.reviews);
+      })
+      .catch(console.error);
+  }, []);
+
+  const submitReview = async () => {
+    if (!isSignedIn) {
+      toast.error('You must be logged in to write a review.');
+      setShowReviewModal(false);
+      return;
+    }
+    if (!reviewText.trim()) {
+      toast.warning('Please write some feedback before submitting.');
+      return;
+    }
+    if (reviewText.trim().length > 1000) {
+      toast.warning('Review must be 1000 characters or less.');
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ rating: reviewRating, text: reviewText })
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || 'Failed to submit');
+      toast.success('Thank you for your review! 🎉');
+      setShowReviewModal(false);
+      setReviewText('');
+      if (reviewRating >= 4) {
+        fetch('/api/reviews?type=live').then(r => r.json()).then(data => { if(data.reviews) setLiveReviews(data.reviews); });
+      }
+    } catch (err) {
+      toast.error(err.message || 'Error submitting review. Please try again.');
+    }
+    setSubmittingReview(false);
+  };
 
   const handleCheckout = async (priceId, planTier) => {
     if (!priceId || priceId.includes('mock')) {
-      alert('Stripe is not fully configured yet! Please add NEXT_PUBLIC_STRIPE_PRO_PRICE_ID to .env.local');
+      toast.info('Payments coming soon! Check back after launch.');
       return;
     }
     setLoadingCheckout(true);
@@ -39,11 +92,11 @@ export default function Home() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Checkout failed');
+        toast.error(data.error || 'Checkout failed. Please try again.');
         setLoadingCheckout(false);
       }
     } catch (err) {
-      alert('Checkout error');
+      toast.error('Checkout error. Please try again.');
       setLoadingCheckout(false);
     }
   };
@@ -96,7 +149,46 @@ export default function Home() {
 
   return (
     <>
-      <SignInModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultIsSignUp={isSignUpModal} />
+      <SignInModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        isSignUp={isSignUpModal}
+      />
+
+      {showReviewModal && (
+        <div className="modal-overlay" style={{ display: 'flex', zIndex: 9999 }}>
+          <div className="modal-content glass hover-glow" style={{ padding: '32px', maxWidth: '400px', width: '90%' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px' }}>Write a Review</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px' }}>
+              Your feedback helps us improve. Reviews of 4 or 5 stars may be featured on our landing page!
+            </p>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', justifyContent: 'center', fontSize: '32px', cursor: 'pointer' }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span 
+                  key={star} 
+                  onClick={() => setReviewRating(star)}
+                  style={{ color: star <= reviewRating ? '#EF4444' : '#333' }}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <textarea 
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              placeholder="What do you think of BrutalAudit?"
+              style={{ width: '100%', height: '100px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#fff', marginBottom: '24px', resize: 'none' }}
+            />
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button className="btn-ghost" onClick={() => setShowReviewModal(false)}>Cancel</button>
+              <button className="btn-red premium-glow" onClick={submitReview} disabled={submittingReview}>
+                {submittingReview ? 'Submitting...' : 'Submit Feedback'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="noise"></div>
 
   
@@ -207,30 +299,59 @@ export default function Home() {
           <div className="glass feature-card hover-glow" style={{ '--i': 6 }}>
             <div className="feature-icon"><Cpu className="lucide-icon" size={28} /></div>
             <div className="feature-title">AI Fix Suggestions</div>
-            <div className="feature-desc">Not just problems: GPT-4 generated refactoring plans, ordered by impact and grouped by effort level.</div>
+            <div className="feature-desc">Not just problems: Groq-powered AI refactoring plans, ordered by impact and grouped by effort level.</div>
           </div>
         </div>
       </section>
 
       <section className="section">
         <div className="section-label">From Developers</div>
-        <h2 className="section-title">Trusted by teams who<br />care about quality.</h2>
-        <div className="testi-grid stagger-group">
-          <div className="glass testi-card hover-lift">
-            <div className="stars">★★★★★</div>
-            <div className="testi-text">"BrutalAudit found a critical API key exposure in our repo that had been there for 8 months. No other tool caught it. This is essential."</div>
-            <div className="testi-author"><div className="avatar">SK</div><div><div className="author-name">Sarah Kim</div><div className="author-role">Senior Developer</div></div></div>
-          </div>
-          <div className="glass testi-card hover-lift">
-            <div className="stars">★★★★★</div>
-            <div className="testi-text">"The architecture analysis is insane. It drew our entire dependency graph and identified a circular dependency chain we had missed for two years."</div>
-            <div className="testi-author"><div className="avatar">MR</div><div><div className="author-name">Marcus Rivera</div><div className="author-role">Open Source Maintainer</div></div></div>
-          </div>
-          <div className="glass testi-card hover-lift">
-            <div className="stars">★★★★★</div>
-            <div className="testi-text">"We reduced our bundle size by 43% using the performance roadmap. The recommendations were specific, actionable, and ranked by actual impact."</div>
-            <div className="testi-author"><div className="avatar">AL</div><div><div className="author-name">Ava Lin</div><div className="author-role">Engineering Manager</div></div></div>
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+          <h2 className="section-title" style={{ margin: 0 }}>Trusted by teams who<br />care about quality.</h2>
+          <button 
+            className="btn-ghost ripple-btn" 
+            style={{ border: '1px solid rgba(255,255,255,0.1)', padding: '10px 24px', borderRadius: '8px' }}
+            onClick={() => {
+              if (!isSignedIn) { toast.info('Please sign in to write a review.'); return; }
+              setShowReviewModal(true);
+            }}
+          >
+            ✏️ Write a Review
+          </button>
+        </div>
+        
+        <div className="testi-grid stagger-group" style={{ marginTop: '40px' }}>
+          {liveReviews.length > 0 ? liveReviews.map((rev) => (
+            <div key={rev.id} className="glass testi-card hover-lift">
+              <div className="stars">{'★'.repeat(rev.rating)}{'☆'.repeat(5 - rev.rating)}</div>
+              <div className="testi-text">"{rev.text}"</div>
+              <div className="testi-author">
+                <div className="avatar">{rev.email.substring(0, 2).toUpperCase()}</div>
+                <div>
+                  <div className="author-name">{rev.email.split('@')[0]}</div>
+                  <div className="author-role">Developer</div>
+                </div>
+              </div>
+            </div>
+          )) : (
+            <>
+              <div className="glass testi-card hover-lift">
+                <div className="stars">★★★★★</div>
+                <div className="testi-text">"BrutalAudit found a critical API key exposure in our repo that had been there for 8 months. No other tool caught it. This is essential."</div>
+                <div className="testi-author"><div className="avatar">SK</div><div><div className="author-name">Sarah Kim</div><div className="author-role">Senior Developer</div></div></div>
+              </div>
+              <div className="glass testi-card hover-lift">
+                <div className="stars">★★★★★</div>
+                <div className="testi-text">"The architecture analysis is insane. It drew our entire dependency graph and identified a circular dependency chain we had missed for two years."</div>
+                <div className="testi-author"><div className="avatar">MR</div><div><div className="author-name">Marcus Rivera</div><div className="author-role">Open Source Maintainer</div></div></div>
+              </div>
+              <div className="glass testi-card hover-lift">
+                <div className="stars">★★★★★</div>
+                <div className="testi-text">"We reduced our bundle size by 43% using the performance roadmap. The recommendations were specific, actionable, and ranked by actual impact."</div>
+                <div className="testi-author"><div className="avatar">AL</div><div><div className="author-name">Ava Lin</div><div className="author-role">Engineering Manager</div></div></div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -269,34 +390,16 @@ export default function Home() {
             <div className="price-feature"><Check size={16} className="text-green" /> Priority support</div>
             <div style={{ marginTop: '24px' }}>
               {!isSignedIn ? (
-                <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Start Pro Trial</button>
+                <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Pro is Free! Get Started</button>
               ) : (
-                <button className="btn-red ripple-btn" style={{ width: '100%' }} disabled={loadingCheckout} onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_pro_mock', 'pro')}>
-                  {loadingCheckout ? 'Loading...' : 'Start Pro Trial'}
+                <button className="btn-red ripple-btn" style={{ width: '100%' }} onClick={() => router.push('/dashboard')}>
+                  Pro is Free! Go to Dashboard
                 </button>
               )}
+              <CountdownBanner />
             </div>
           </div>
-          <div className="glass price-card hover-glow">
-            <div className="price-tier">Elite</div>
-            <div className="price-amount">₹499<span style={{ fontSize: '20px', color: 'var(--text3)' }}>/mo</span></div>
-            <div className="price-period">For heavy contributors</div>
-            <div className="price-divider"></div>
-            <div className="price-feature"><Check size={16} className="text-green" /> Everything in Pro</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> Unlimited AI fixes</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> API access</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> Custom CI/CD hooks</div>
-            <div className="price-feature"><Check size={16} className="text-green" /> 24/7 Priority support</div>
-            <div style={{ marginTop: '24px' }}>
-              {!isSignedIn ? (
-                <button className="btn-ghost ripple-btn" style={{ width: '100%' }} onClick={openSignUp}>Get Elite</button>
-              ) : (
-                <button className="btn-ghost ripple-btn" style={{ width: '100%' }} disabled={loadingCheckout} onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_ELITE_PRICE_ID || 'price_elite_mock', 'elite')}>
-                  {loadingCheckout ? 'Loading...' : 'Get Elite'}
-                </button>
-              )}
-            </div>
-          </div>
+
         </div>
       </section>
 

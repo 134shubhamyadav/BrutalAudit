@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/Sidebar.jsx';
+import { getTitlesFromScore } from '../../lib/achievements';
 import { StatCardSkeleton, RepoCardSkeleton } from '../../components/SkeletonCard.jsx';
 import EmptyState, { ErrorState } from '../../components/EmptyState.jsx';
 import { ScoreRadarChart, TrendsLineChart } from '../../components/Charts.jsx';
 import AnimatedCounter from '../../components/AnimatedCounter';
 import MagneticCard from '../../components/MagneticCard';
-import { BarChart3, ShieldCheck, Component, Cpu, Rocket, HeartPulse, Info } from 'lucide-react';
+import { BarChart3, ShieldCheck, Component, Cpu, Rocket, Info, TestTube, BookOpen } from 'lucide-react';
 import { api } from '../../lib/api.js';
 
 function timeAgo(dateStr) {
@@ -90,6 +91,15 @@ export default function DashboardPage() {
                 : `You have ${recentAudits.length} recent audit${recentAudits.length !== 1 ? 's' : ''}${criticalCount > 0 ? `. ${criticalCount} critical issue${criticalCount !== 1 ? 's' : ''} need${criticalCount === 1 ? 's' : ''} attention.` : '. Looking good!'}`
               }
             </div>
+            {!loadingStats && stats && (
+              <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {getTitlesFromScore(stats).map(t => (
+                  <span key={t.id} style={{ fontSize: '11px', background: 'rgba(255,255,255,0.05)', color: t.color, padding: '4px 10px', borderRadius: '12px', border: `1px solid ${t.color}44`, fontWeight: 'bold' }}>
+                    {t.label}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <button
             className="btn-red premium-glow ripple-btn"
@@ -174,36 +184,36 @@ export default function DashboardPage() {
               </MagneticCard>
 
               <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 5, position: 'relative' }}>
-                <div title="Checks for CI/CD pipelines, Dockerfiles, and deployment configurations." style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--text-muted)', cursor: 'help' }}>
+                <div title="Checks for test coverage, missing edge cases, and test quality." style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={16} />
                 </div>
-                <div className="ov-icon glow-icon" style={{ color: '#22C55E' }}><Rocket size={24} /></div>
-                <div className="ov-label">Production Readiness</div>
+                <div className="ov-icon glow-icon" style={{ color: '#8B5CF6' }}><TestTube size={24} /></div>
+                <div className="ov-label">Test Coverage</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter end={stats?.avgReadiness || 0} />
+                    <AnimatedCounter end={stats?.avgTestCoverage || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
-                <div className="ov-change" style={{ color: '#22C55E' }}>
-                  Docker & CI pipelines
+                <div className="ov-change" style={{ color: '#8B5CF6' }}>
+                  Unit & integration tests
                 </div>
               </MagneticCard>
 
               <MagneticCard className="glass ov-card hover-lift" style={{ '--i': 6, position: 'relative' }}>
-                <div title="Assesses code maintainability, documentation quality, and general codebase hygiene." style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--text-muted)', cursor: 'help' }}>
+                <div title="Assesses code maintainability, documentation quality, and README hygiene." style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={16} />
                 </div>
-                <div className="ov-icon glow-icon" style={{ color: '#a1a1aa' }}><HeartPulse size={24} /></div>
-                <div className="ov-label">Repository Health</div>
+                <div className="ov-icon glow-icon" style={{ color: '#0ea5e9' }}><BookOpen size={24} /></div>
+                <div className="ov-label">Documentation Score</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
                   <div className="ov-val">
-                    <AnimatedCounter end={stats?.avgHealth || 0} />
+                    <AnimatedCounter end={stats?.avgDocumentation || 0} />
                   </div>
                   <span className="ov-val-suffix">/100</span>
                 </div>
-                <div className="ov-change" style={{ color: '#22C55E' }}>
-                  Good maintainability
+                <div className="ov-change" style={{ color: '#0ea5e9' }}>
+                  Code comments & docs
                 </div>
               </MagneticCard>
 

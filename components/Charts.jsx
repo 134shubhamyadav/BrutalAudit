@@ -27,7 +27,7 @@ export function ScoreRadarChart({ scores }) {
   if (!scores) return null;
 
   const data = {
-    labels: ['Security', 'Architecture', 'Performance', 'AI Slop', 'DevOps', 'Readiness'],
+    labels: ['Security', 'Architecture', 'Performance', 'AI Slop', 'Test Coverage', 'Documentation'],
     datasets: [
       {
         label: 'Score',
@@ -36,8 +36,8 @@ export function ScoreRadarChart({ scores }) {
           scores.architecture || 0, 
           scores.performance || 0,
           scores.slop || 0,
-          scores.devops || 0,
-          scores.readiness || 0
+          scores.test_coverage || 0,
+          scores.documentation || 0
         ],
         backgroundColor: 'rgba(59, 130, 246, 0.25)', // Premium blue highlight
         borderColor: '#3B82F6',
@@ -155,4 +155,81 @@ export function TrendsLineChart({ audits }) {
   };
 
   return <div style={{ height: '240px', width: '100%', marginTop: '16px' }}><Line data={data} options={options} /></div>;
+}
+
+export function HistoryLineChart({ history }) {
+  if (!history || history.length < 2) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        Not enough historical data to show a trend.
+      </div>
+    );
+  }
+
+  const data = {
+    labels: history.map(h => new Date(h.created_at).toLocaleDateString()),
+    datasets: [
+      {
+        label: 'Overall Score',
+        data: history.map(h => h.scores.overall || 0),
+        borderColor: '#10B981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+      },
+      {
+        label: 'Security',
+        data: history.map(h => h.scores.security || 0),
+        borderColor: '#EF4444',
+        borderWidth: 1,
+        borderDash: [5, 5],
+        tension: 0.3,
+      },
+      {
+        label: 'Architecture',
+        data: history.map(h => h.scores.architecture || 0),
+        borderColor: '#F59E0B',
+        borderWidth: 1,
+        borderDash: [5, 5],
+        tension: 0.3,
+      }
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#a1a1aa',
+          padding: 20,
+          font: { family: "'Space Grotesk', sans-serif" }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        titleFont: { family: "'Space Grotesk', sans-serif" },
+        bodyFont: { family: "'Space Grotesk', sans-serif" },
+        padding: 12,
+        cornerRadius: 8,
+      }
+    },
+    scales: {
+      y: {
+        min: 0,
+        max: 100,
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: { color: '#71717a' }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { color: '#71717a' }
+      }
+    }
+  };
+
+  return <Line data={data} options={options} />;
 }

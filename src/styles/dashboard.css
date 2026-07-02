@@ -240,4 +240,9 @@
   }
 
   .sidebar-logo.desktop-only { display: none; }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
+

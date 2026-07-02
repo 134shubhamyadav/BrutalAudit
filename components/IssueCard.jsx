@@ -37,7 +37,7 @@ export default function IssueCard({ finding }) {
         </h4>
         <span
           className="issue-badge"
-          style={{ background: config.bg, color: config.color, border: `1px solid ${config.color}33` }}
+          style={{ background: config.bg, color: config.color, border: `1px solid ${config.color}33`, borderRadius: '12px', padding: '2px 8px', fontSize: '12px', fontWeight: '500' }}
         >
           {config.label}
         </span>

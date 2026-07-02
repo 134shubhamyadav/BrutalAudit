@@ -30,7 +30,24 @@ export async function POST(request) {
       return Response.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const { owner, repo, isDetailed, customPrompt } = body;
+    const { owner, repo, isDetailed, customPrompt: rawCustomPrompt } = body;
+
+    // Sanitize customPrompt server-side: cap length and strip injection attempts
+    let customPrompt = '';
+    if (rawCustomPrompt && typeof rawCustomPrompt === 'string') {
+      const trimmed = rawCustomPrompt.trim().slice(0, 500);
+      const injectionPatterns = [
+        /ignore\s+(all\s+)?(previous|above|prior)/i,
+        /disregard\s+(all\s+)?(instructions|above)/i,
+        /you\s+are\s+now/i,
+        /return\s+(only\s+)?perfect/i,
+        /score[s]?\s*[:=]\s*100/i,
+        /forget\s+(everything|all)/i,
+      ];
+      const isInjection = injectionPatterns.some(p => p.test(trimmed));
+      customPrompt = isInjection ? '' : trimmed;
+    }
+
     const validationError = validateRepoInput(owner, repo);
     if (validationError) {
       return Response.json({ error: validationError }, { status: 400 });

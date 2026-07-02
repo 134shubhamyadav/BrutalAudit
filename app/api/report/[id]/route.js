@@ -14,12 +14,8 @@ export async function GET(request, { params }) {
       return Response.json({ error: 'Audit not found' }, { status: 404 });
     }
 
-    const { userId } = await getAuth(request);
-    if (!userId || audit.user_id !== userId) {
-      return Response.json({ error: 'Unauthorized' }, { status: 403 });
-    }
-
-    // Reports are now restricted to the owner
+    // Reports are public by UUID (unguessable ID)
+    // Removed the auth check so reports can be shared via URL
     return Response.json(audit);
   } catch (error) {
     return Response.json({ error: 'Failed to load audit' }, { status: 500 });

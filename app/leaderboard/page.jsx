@@ -4,6 +4,7 @@ import { useAuth } from '../../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
 import EmptyState, { ErrorState } from '../../components/EmptyState';
+import { getTitlesFromScore } from '../../lib/achievements';
 import { Trophy, Medal, Star } from 'lucide-react';
 
 export default function LeaderboardPage() {
@@ -12,9 +13,22 @@ export default function LeaderboardPage() {
   const [leaders, setLeaders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [timeLeft, setTimeLeft] = useState('');
 
   useEffect(() => {
     fetchLeaderboard();
+    const interval = setInterval(() => {
+      const now = new Date();
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+      const distance = endOfMonth.getTime() - now.getTime();
+      
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      
+      setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   async function fetchLeaderboard() {
@@ -34,9 +48,9 @@ export default function LeaderboardPage() {
   }
 
   function getRewardBadge(idx) {
-    if (idx === 0) return <span style={{ fontSize: '11px', background: 'linear-gradient(90deg, #FFD700, #F59E0B)', color: '#000', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>100% OFF ELITE</span>;
-    if (idx === 1) return <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>100% OFF PRO</span>;
-    if (idx === 2) return <span style={{ fontSize: '11px', background: 'rgba(59, 130, 246, 0.2)', color: '#3B82F6', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>50% OFF PRO</span>;
+    if (idx === 0) return <span style={{ fontSize: '11px', background: 'linear-gradient(90deg, #FFD700, #F59E0B)', color: '#000', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>100% OFF PRO</span>;
+    if (idx === 1) return <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>50% OFF PRO</span>;
+    if (idx === 2) return <span style={{ fontSize: '11px', background: 'rgba(59, 130, 246, 0.2)', color: '#3B82F6', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>25% OFF PRO</span>;
     if (idx >= 3 && idx <= 9) return <span style={{ fontSize: '11px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>10% OFF PRO</span>;
     return null;
   }
@@ -68,15 +82,18 @@ export default function LeaderboardPage() {
 
         <div className="glass dash-widget anim-enter" style={{ marginTop: '24px', padding: '24px', background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(10, 10, 10, 0) 100%)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
           <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🎁 Leaderboard Rewards
+            🎁 Monthly Leaderboard Rewards
+            <span style={{ fontSize: '12px', background: 'rgba(0,0,0,0.4)', padding: '4px 8px', borderRadius: '8px', color: '#fca5a5', marginLeft: 'auto', fontWeight: 'normal', fontFamily: 'monospace' }}>
+              Resets in: {timeLeft || '...'}
+            </span>
           </h3>
           <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>
             Compete for exclusive subscription discounts based on your rank!
             <br />
             <span style={{ display: 'inline-block', marginTop: '8px' }}>
-              <strong style={{ color: '#F59E0B' }}>1st Place:</strong> 100% off Elite. 
-              <strong style={{ color: '#10B981', marginLeft: '16px' }}>2nd Place:</strong> 100% off Pro. 
-              <strong style={{ color: '#3B82F6', marginLeft: '16px' }}>3rd Place:</strong> 50% off Pro. 
+              <strong style={{ color: '#F59E0B' }}>1st Place:</strong> 100% off Pro. 
+              <strong style={{ color: '#10B981', marginLeft: '16px' }}>2nd Place:</strong> 50% off Pro. 
+              <strong style={{ color: '#3B82F6', marginLeft: '16px' }}>3rd Place:</strong> 25% off Pro. 
               <strong style={{ color: '#a1a1aa', marginLeft: '16px' }}>4th-10th Place:</strong> 10% off Pro.
             </span>
           </p>
@@ -119,6 +136,15 @@ export default function LeaderboardPage() {
                       @{repo.username}
                       {getRewardBadge(idx)}
                     </div>
+                    {repo.scores && (
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {getTitlesFromScore(repo.scores).map(t => (
+                          <span key={t.id} style={{ fontSize: '10px', background: 'rgba(255,255,255,0.05)', color: t.color, padding: '2px 8px', borderRadius: '12px', border: `1px solid ${t.color}44`, fontWeight: 'bold' }}>
+                            {t.label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   
                   <div style={{ width: '100px', textAlign: 'right' }}>

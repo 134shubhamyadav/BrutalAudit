@@ -2,10 +2,15 @@ import { supabase } from '../../../lib/supabase.js';
 
 export async function GET() {
   try {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
     const { data: audits, error } = await supabase
       .from('audits')
       .select('id, user_id, scores, created_at')
       .eq('status', 'done')
+      .gte('created_at', startOfMonth.toISOString())
       .order('created_at', { ascending: false })
       .limit(1000);
 
@@ -24,6 +29,7 @@ export async function GET() {
         uniqueUsers.push({
           user_id: item.user_id,
           score: item.scores.overall,
+          scores: item.scores,
           created_at: item.created_at
         });
         seenUsers.add(item.user_id);
@@ -52,8 +58,17 @@ export async function GET() {
       }
     }
 
-    return Response.json({ leaderboard: top50 });
-  } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    // Add 5-minute cache header (CDN level + Browser level)
+    return Response.json(
+      { leaderboard: top50 },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    return Response.json({ error: 'Failed to load leaderboard' }, { status: 500 });
   }
 }
